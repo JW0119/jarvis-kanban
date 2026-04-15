@@ -15,75 +15,88 @@
     --text: #e8eaed;
     --text-dim: #9aa0a6;
     --text-muted: #5f6368;
-    --accent-work: #4285f4;     /* 회사 */
-    --accent-home: #34a853;     /* 집 */
-    --accent-hobby: #fbbc04;    /* 취미 */
-    --accent-inbox: #ea4335;    /* 미분류 */
+    --accent-work: #4285f4;
+    --accent-home: #34a853;
+    --accent-hobby: #fbbc04;
+    --accent-inbox: #ea4335;
+    --accent-doing: #8ab4f8;
     --shadow: 0 4px 12px rgba(0,0,0,0.4);
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     margin: 0;
-    padding: 24px;
+    padding: 12px;
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, "Segoe UI", "Noto Sans KR", sans-serif;
+    font-family: -apple-system, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
     font-size: 14px;
     min-height: 100vh;
+    word-break: keep-all;
   }
   header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--border);
   }
   h1 {
-    font-size: 22px;
-    margin: 0;
+    font-size: 18px;
+    margin: 0 0 10px;
     font-weight: 600;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.3px;
   }
   .controls {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
   }
   button {
     background: var(--bg-elev);
     border: 1px solid var(--border-strong);
     color: var(--text);
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 10px 12px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 13px;
     font-family: inherit;
     transition: background 0.15s;
+    min-height: 44px;
   }
-  button:hover { background: var(--bg-card); }
+  button:active { background: var(--bg-card); }
   button.primary {
     background: var(--accent-work);
     border-color: var(--accent-work);
   }
-  button.primary:hover { background: #5b95f5; }
+  button.compact {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-height: 32px;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .toolbar button {
+    font-size: 12px;
+    padding: 8px 12px;
+    min-height: 36px;
+  }
+  .toolbar button.active {
+    background: var(--accent-work);
+    border-color: var(--accent-work);
+  }
 
   .board {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    align-items: start;
-  }
-  @media (max-width: 1200px) {
-    .board { grid-template-columns: repeat(2, 1fr); }
-  }
-  @media (max-width: 700px) {
-    .board { grid-template-columns: 1fr; }
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
   .column {
     background: var(--bg-elev);
     border-radius: 12px;
-    padding: 16px;
-    min-height: 400px;
+    padding: 14px;
     border: 1px solid var(--border);
   }
   .column-header {
@@ -109,42 +122,70 @@
   .count {
     background: var(--bg-card);
     color: var(--text-dim);
-    padding: 2px 10px;
+    padding: 3px 10px;
     border-radius: 12px;
     font-size: 12px;
     font-weight: 500;
   }
   .task-list {
-    min-height: 200px;
+    min-height: 60px;
     padding: 4px;
   }
   .task {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 12px;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     cursor: grab;
-    transition: transform 0.1s, box-shadow 0.1s;
-    word-break: keep-all;
-  }
-  .task:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow);
+    transition: transform 0.1s, box-shadow 0.1s, opacity 0.15s;
+    position: relative;
+    min-height: 60px;
   }
   .task:active { cursor: grabbing; }
-  .task.sortable-ghost {
-    opacity: 0.4;
-    background: var(--accent-work);
+  .task.sortable-ghost { opacity: 0.4; background: var(--accent-work); }
+  .task.sortable-chosen { box-shadow: var(--shadow); }
+
+  .task[data-status="doing"] {
+    border-left: 4px solid var(--accent-doing);
+    padding-left: 9px;
+    box-shadow: 0 0 0 1px rgba(138,180,248,0.3);
   }
-  .task.sortable-chosen {
-    box-shadow: var(--shadow);
+  .task[data-status="done"] { opacity: 0.45; }
+  .task[data-status="done"] .task-title { text-decoration: line-through; }
+
+  body.hide-done .task[data-status="done"] { display: none; }
+
+  .task-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
   }
+  .status-btn {
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text-dim);
+    padding: 2px 10px;
+    font-size: 11px;
+    min-height: 26px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+  }
+  .status-btn[data-state="todo"]  { color: var(--text-dim); border-color: var(--border-strong); }
+  .status-btn[data-state="doing"] { color: var(--accent-doing); border-color: var(--accent-doing); background: rgba(138,180,248,0.1); }
+  .status-btn[data-state="done"]  { color: var(--accent-home); border-color: var(--accent-home); background: rgba(52,168,83,0.1); }
+
   .task-title {
     font-weight: 500;
     line-height: 1.45;
     margin-bottom: 6px;
+    font-size: 14px;
+    padding-right: 4px;
   }
   .task-meta {
     display: flex;
@@ -160,16 +201,37 @@
     color: var(--text-dim);
     border: 1px solid var(--border);
   }
-  .badge.short  { background: rgba(234,67,53,0.15); color: #ff8a80; border-color: rgba(234,67,53,0.3); }
-  .badge.mid    { background: rgba(251,188,4,0.15);  color: #ffd54f; border-color: rgba(251,188,4,0.3); }
-  .badge.long   { background: rgba(52,168,83,0.15);  color: #81c995; border-color: rgba(52,168,83,0.3); }
-  .badge.proj   { background: rgba(66,133,244,0.15); color: #8ab4f8; border-color: rgba(66,133,244,0.3); }
+  .badge.short { background: rgba(234,67,53,0.15);  color: #ff8a80; border-color: rgba(234,67,53,0.3); }
+  .badge.mid   { background: rgba(251,188,4,0.15);  color: #ffd54f; border-color: rgba(251,188,4,0.3); }
+  .badge.long  { background: rgba(52,168,83,0.15);  color: #81c995; border-color: rgba(52,168,83,0.3); }
+  .badge.proj  { background: rgba(66,133,244,0.15); color: #8ab4f8; border-color: rgba(66,133,244,0.3); }
+
+  .task-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border);
+  }
+  .task-action {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 8px;
+    font-size: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    min-height: 30px;
+  }
+  .task-action:active { background: var(--bg-elev); }
+  .task-action.delete { color: #ff8a80; border-color: rgba(234,67,53,0.3); }
 
   .empty {
     color: var(--text-muted);
     text-align: center;
-    padding: 40px 0;
-    font-size: 13px;
+    padding: 24px 0;
+    font-size: 12px;
   }
 
   .add-task {
@@ -177,40 +239,74 @@
     background: transparent;
     border: 1px dashed var(--border-strong);
     color: var(--text-muted);
-    padding: 10px;
-    border-radius: 6px;
+    padding: 12px;
+    border-radius: 8px;
     margin-top: 8px;
     cursor: pointer;
     font-size: 12px;
+    min-height: 44px;
   }
-  .add-task:hover { color: var(--text); border-color: var(--border-strong); }
+  .add-task:active { color: var(--text); }
 
   .footer {
-    margin-top: 32px;
+    margin-top: 24px;
     text-align: center;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: 11px;
+    padding: 0 8px;
+    line-height: 1.6;
   }
   .save-status {
     display: inline-block;
-    margin-left: 8px;
+    margin-left: 6px;
     color: var(--accent-home);
     opacity: 0;
     transition: opacity 0.3s;
   }
   .save-status.show { opacity: 1; }
+
+  /* PC expansion */
+  @media (min-width: 768px) {
+    body { padding: 24px; font-size: 14px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    h1 { font-size: 22px; margin: 0; }
+    .controls {
+      display: flex;
+      gap: 8px;
+      grid-template-columns: none;
+    }
+    button { min-height: 40px; }
+    .board {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+  }
+  @media (min-width: 1200px) {
+    .board { grid-template-columns: repeat(4, 1fr); }
+  }
 </style>
 </head>
 <body>
   <header>
-    <h1>🧠 자비스 칸반 — 컨텍스트별 할 일</h1>
+    <h1>🧠 자비스 칸반</h1>
     <div class="controls">
       <button onclick="exportJSON()">📦 내보내기</button>
       <button onclick="importJSON()">📥 불러오기</button>
-      <button onclick="resetDefault()">🔄 기본값</button>
-      <button class="primary" onclick="saveAll()">💾 저장 <span class="save-status" id="status">✓ 저장됨</span></button>
+      <button onclick="resetDefault()">🔄 초기화</button>
+      <button class="primary" onclick="saveAll()">💾 저장<span class="save-status" id="status">✓</span></button>
     </div>
   </header>
+
+  <div class="toolbar">
+    <button id="filter-done-btn" onclick="toggleHideDone()">✅ 완료 숨김</button>
+    <button onclick="cycleExpand()">🔧 액션 버튼</button>
+    <button onclick="showHelp()">❓ 도움말</button>
+  </div>
 
   <div class="board" id="board">
     <div class="column" data-cat="inbox">
@@ -244,56 +340,71 @@
   </div>
 
   <div class="footer">
-    드래그해서 카테고리 이동 · 자동 저장 (브라우저 localStorage) · 📦 내보내기로 JSON 백업
+    <strong>💡 사용법</strong><br>
+    · 상태 배지(TODO / DOING / DONE) 탭하면 순환<br>
+    · 카드 길게 눌러 드래그하면 컬럼 이동<br>
+    · 자동 저장 (브라우저 localStorage)
   </div>
 
 <script>
-const STORAGE_KEY = 'jarvis-kanban-v1';
+const STORAGE_KEY = 'jarvis-kanban-v2';
 
 const DEFAULT_TASKS = [
-  // 회사 (Samsung UX, AXD)
-  { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD' },
-  { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD' },
-  { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD' },
-  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'work',  horizon: 'mid',   proj: '펌프센터' },
-  { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI' },
-  { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI' },
-  { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD' },
-
-  // 집 (가족, 서준이)
-  { id: 't10', title: '서준이 과제 진행 검토',                 cat: 'home',  horizon: 'short', proj: '서준이공모전' },
-  { id: 't11', title: '서준이 데이터 수집 (5개 데이터셋)',     cat: 'home',  horizon: 'mid',   proj: '서준이공모전' },
-
-  // 취미 (개인 IP, 자비스, 사이드 프로젝트)
-  { id: 't20', title: 'The Universe 오케스트레이터 설계',     cat: 'hobby', horizon: 'short', proj: 'Universe' },
-  { id: 't21', title: 'llm-wiki 소스 ingest 파이프라인 검증', cat: 'hobby', horizon: 'short', proj: 'Jarvis' },
-  { id: 't22', title: 'The Universe 수익 포인트 정리',        cat: 'hobby', horizon: 'mid',   proj: 'Universe' },
-  { id: 't23', title: 'The Universe 슬라이드 업데이트',       cat: 'hobby', horizon: 'mid',   proj: 'Universe' },
-  { id: 't24', title: 'Resonance POC 8주 계획',              cat: 'hobby', horizon: 'long',  proj: 'Resonance' },
-  { id: 't25', title: '바이브 게임즈',                        cat: 'hobby', horizon: 'long',  proj: '게임' },
-  { id: 't26', title: 'AI 개발팀 (에이전트 설계자 조직)',     cat: 'hobby', horizon: 'long',  proj: 'AI팀' },
-  { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis' },
+  { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD',          status: 'todo' },
+  { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo' },
+  { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo' },
+  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'work',  horizon: 'mid',   proj: '펌프센터',      status: 'todo' },
+  { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo' },
+  { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo' },
+  { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD',          status: 'todo' },
+  { id: 't10', title: '서준이 과제 진행 검토',                 cat: 'home',  horizon: 'short', proj: '서준이공모전', status: 'todo' },
+  { id: 't11', title: '서준이 데이터 수집 (5개 데이터셋)',     cat: 'home',  horizon: 'mid',   proj: '서준이공모전', status: 'todo' },
+  { id: 't20', title: 'The Universe 오케스트레이터 설계',     cat: 'hobby', horizon: 'short', proj: 'Universe',     status: 'doing' },
+  { id: 't21', title: 'llm-wiki 소스 ingest 파이프라인 검증', cat: 'hobby', horizon: 'short', proj: 'Jarvis',       status: 'todo' },
+  { id: 't22', title: 'The Universe 수익 포인트 정리',        cat: 'hobby', horizon: 'mid',   proj: 'Universe',     status: 'todo' },
+  { id: 't23', title: 'The Universe 슬라이드 업데이트',       cat: 'hobby', horizon: 'mid',   proj: 'Universe',     status: 'todo' },
+  { id: 't24', title: 'Resonance POC 8주 계획',              cat: 'hobby', horizon: 'long',  proj: 'Resonance',    status: 'todo' },
+  { id: 't25', title: '바이브 게임즈',                        cat: 'hobby', horizon: 'long',  proj: '게임',          status: 'todo' },
+  { id: 't26', title: 'AI 개발팀 (에이전트 설계자 조직)',     cat: 'hobby', horizon: 'long',  proj: 'AI팀',          status: 'todo' },
+  { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis',       status: 'todo' },
 ];
 
+const STATUS_ORDER = ['todo', 'doing', 'done'];
+const STATUS_LABEL = { todo: 'TODO', doing: 'DOING', done: 'DONE' };
+
 let tasks = loadTasks();
+let hideDone = localStorage.getItem('kanban-hide-done') === '1';
+let showActions = localStorage.getItem('kanban-show-actions') === '1';
 
 function loadTasks() {
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) {
-    try { return JSON.parse(stored); } catch(e) {}
+    try {
+      const parsed = JSON.parse(stored);
+      return parsed.map(t => ({ status: 'todo', ...t }));
+    } catch(e) {}
+  }
+  // migrate from v1
+  const v1 = localStorage.getItem('jarvis-kanban-v1');
+  if (v1) {
+    try {
+      const parsed = JSON.parse(v1).map(t => ({ status: 'todo', ...t }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+      return parsed;
+    } catch(e) {}
   }
   return JSON.parse(JSON.stringify(DEFAULT_TASKS));
 }
 
 function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  showSaved();
-}
-
-function showSaved() {
   const el = document.getElementById('status');
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 1200);
+  setTimeout(() => el.classList.remove('show'), 1000);
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function horizonBadge(h) {
@@ -302,34 +413,39 @@ function horizonBadge(h) {
   if (h === 'long')  return '<span class="badge long">장기</span>';
   return '';
 }
-
-function projBadge(p) {
-  if (!p) return '';
-  return `<span class="badge proj">${p}</span>`;
-}
+function projBadge(p) { return p ? `<span class="badge proj">${escapeHtml(p)}</span>` : ''; }
 
 function render() {
+  document.body.classList.toggle('hide-done', hideDone);
+  document.getElementById('filter-done-btn').classList.toggle('active', hideDone);
+
   const cats = ['inbox', 'work', 'home', 'hobby'];
   cats.forEach(cat => {
     const list = document.getElementById('list-' + cat);
     const items = tasks.filter(t => t.cat === cat);
-    document.getElementById('count-' + cat).textContent = items.length;
+    const visibleCount = hideDone ? items.filter(t => t.status !== 'done').length : items.length;
+    document.getElementById('count-' + cat).textContent = visibleCount;
     if (items.length === 0) {
       list.innerHTML = '<div class="empty">비어있음</div>';
     } else {
       list.innerHTML = items.map(t => `
-        <div class="task" data-id="${t.id}">
-          <div class="task-title">${escapeHtml(t.title)}</div>
+        <div class="task" data-id="${t.id}" data-status="${t.status || 'todo'}">
+          <div class="task-header">
+            <div class="task-title">${escapeHtml(t.title)}</div>
+            <button class="status-btn" data-state="${t.status || 'todo'}" onclick="cycleStatus('${t.id}', event)">${STATUS_LABEL[t.status || 'todo']}</button>
+          </div>
           <div class="task-meta">${horizonBadge(t.horizon)}${projBadge(t.proj)}</div>
+          ${showActions ? `
+          <div class="task-actions">
+            <button class="task-action" onclick="editTask('${t.id}', event)">✏️ 수정</button>
+            <button class="task-action" onclick="cycleHorizon('${t.id}', event)">📅 ${t.horizon || '—'}</button>
+            <button class="task-action delete" onclick="deleteTask('${t.id}', event)">🗑️ 삭제</button>
+          </div>` : ''}
         </div>
       `).join('');
     }
   });
   initSortable();
-}
-
-function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function initSortable() {
@@ -339,16 +455,15 @@ function initSortable() {
     new Sortable(el, {
       group: 'kanban',
       animation: 150,
+      delay: 150, // mobile long-press to drag
+      delayOnTouchOnly: true,
       ghostClass: 'sortable-ghost',
       chosenClass: 'sortable-chosen',
       onEnd: evt => {
         const id = evt.item.dataset.id;
         const newCat = evt.to.id.replace('list-', '');
         const task = tasks.find(t => t.id === id);
-        if (task && task.cat !== newCat) {
-          task.cat = newCat;
-        }
-        // reorder within column
+        if (task) task.cat = newCat;
         const newOrder = Array.from(evt.to.children)
           .filter(c => c.classList.contains('task'))
           .map(c => c.dataset.id);
@@ -356,25 +471,102 @@ function initSortable() {
         const inCat = newOrder.map(id => tasks.find(t => t.id === id)).filter(Boolean);
         tasks = [...others, ...inCat];
         saveTasks();
-        // re-render counts only
         render();
       }
     });
   });
 }
 
-function addTask(cat) {
-  const title = prompt('새 할 일 제목:');
-  if (!title || !title.trim()) return;
-  const id = 't' + Date.now();
-  tasks.push({ id, title: title.trim(), cat, horizon: 'short', proj: '' });
+function cycleStatus(id, evt) {
+  if (evt) evt.stopPropagation();
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  const cur = task.status || 'todo';
+  const next = STATUS_ORDER[(STATUS_ORDER.indexOf(cur) + 1) % STATUS_ORDER.length];
+  task.status = next;
   saveTasks();
   render();
 }
 
-function saveAll() {
+function cycleHorizon(id, evt) {
+  if (evt) evt.stopPropagation();
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  const ORDER = ['short', 'mid', 'long'];
+  const cur = task.horizon || 'short';
+  task.horizon = ORDER[(ORDER.indexOf(cur) + 1) % ORDER.length];
   saveTasks();
+  render();
 }
+
+function editTask(id, evt) {
+  if (evt) evt.stopPropagation();
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  const newTitle = prompt('제목 수정:', task.title);
+  if (newTitle && newTitle.trim()) {
+    task.title = newTitle.trim();
+    saveTasks();
+    render();
+  }
+}
+
+function deleteTask(id, evt) {
+  if (evt) evt.stopPropagation();
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  if (!confirm(`"${task.title}" 삭제하시겠습니까?`)) return;
+  tasks = tasks.filter(t => t.id !== id);
+  saveTasks();
+  render();
+}
+
+function addTask(cat) {
+  const title = prompt('새 할 일 제목:');
+  if (!title || !title.trim()) return;
+  const id = 't' + Date.now();
+  tasks.push({ id, title: title.trim(), cat, horizon: 'short', proj: '', status: 'todo' });
+  saveTasks();
+  render();
+}
+
+function toggleHideDone() {
+  hideDone = !hideDone;
+  localStorage.setItem('kanban-hide-done', hideDone ? '1' : '0');
+  render();
+}
+
+function cycleExpand() {
+  showActions = !showActions;
+  localStorage.setItem('kanban-show-actions', showActions ? '1' : '0');
+  render();
+}
+
+function showHelp() {
+  alert([
+    '📘 자비스 칸반 사용법',
+    '',
+    '▶ 상태 변경:',
+    '  카드 우측 상단 TODO/DOING/DONE 배지를 탭하면 순환',
+    '  TODO → DOING → DONE → TODO',
+    '',
+    '▶ 카테고리 이동:',
+    '  카드를 길게 누른 채로 드래그해서 컬럼 간 이동',
+    '',
+    '▶ 액션 버튼:',
+    '  툴바의 "🔧 액션 버튼" 탭하면 각 카드에',
+    '  수정/기간변경/삭제 버튼이 나타남',
+    '',
+    '▶ 완료 숨김:',
+    '  "✅ 완료 숨김" 토글로 DONE 상태 카드 숨기기',
+    '',
+    '▶ 저장:',
+    '  모든 변경은 브라우저 자동 저장 (localStorage)',
+    '  📦 내보내기로 JSON 백업 가능',
+  ].join('\n'));
+}
+
+function saveAll() { saveTasks(); }
 
 function exportJSON() {
   const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: 'application/json' });
@@ -399,7 +591,7 @@ function importJSON() {
       try {
         const data = JSON.parse(ev.target.result);
         if (Array.isArray(data)) {
-          tasks = data;
+          tasks = data.map(t => ({ status: 'todo', ...t }));
           saveTasks();
           render();
         }
@@ -411,7 +603,7 @@ function importJSON() {
 }
 
 function resetDefault() {
-  if (!confirm('기본값으로 초기화하시겠습니까? 현재 변경사항은 사라집니다.')) return;
+  if (!confirm('기본값으로 초기화하시겠습니까? 현재 변경사항이 사라집니다.')) return;
   tasks = JSON.parse(JSON.stringify(DEFAULT_TASKS));
   saveTasks();
   render();
