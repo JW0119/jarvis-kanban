@@ -2,348 +2,732 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>자비스 칸반 — 회사 · 집 · 취미</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b0c10">
+<title>자비스 칸반 · 회사 · 집 · 취미</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
+  /* ===========================
+     Design Tokens
+     =========================== */
   :root {
-    --bg: #0e0f13;
-    --bg-elev: #15171c;
-    --bg-card: #1c1f26;
-    --border: #2a2e37;
-    --border-strong: #3a3f4a;
-    --text: #e8eaed;
-    --text-dim: #9aa0a6;
-    --text-muted: #5f6368;
-    --accent-work: #4285f4;
-    --accent-home: #34a853;
-    --accent-hobby: #fbbc04;
-    --accent-inbox: #ea4335;
-    --accent-doing: #8ab4f8;
-    --shadow: 0 4px 12px rgba(0,0,0,0.4);
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body {
-    margin: 0;
-    padding: 12px;
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
-    font-size: 14px;
-    min-height: 100vh;
-    word-break: keep-all;
-  }
-  header {
-    margin-bottom: 16px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  h1 {
-    font-size: 18px;
-    margin: 0 0 10px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-  }
-  .controls {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-  }
-  button {
-    background: var(--bg-elev);
-    border: 1px solid var(--border-strong);
-    color: var(--text);
-    padding: 10px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    font-family: inherit;
-    transition: background 0.15s;
-    min-height: 44px;
-  }
-  button:active { background: var(--bg-card); }
-  button.primary {
-    background: var(--accent-work);
-    border-color: var(--accent-work);
-  }
-  button.compact {
-    padding: 6px 10px;
-    font-size: 12px;
-    min-height: 32px;
+    /* Semantic color (category) */
+    --color-inbox: #e84c5c;
+    --color-work:  #4f7cff;
+    --color-home:  #2fb866;
+    --color-hobby: #f5a623;
+
+    /* State */
+    --state-todo:  #9aa0a6;
+    --state-doing: #8ab4f8;
+    --state-done:  #34a853;
+
+    /* Horizon */
+    --h-short: #ff8a80;
+    --h-mid:   #ffd166;
+    --h-long:  #81c995;
+
+    /* Surfaces (dark default) */
+    --surface-0: #0b0c10;
+    --surface-1: #12141a;
+    --surface-2: #181b23;
+    --surface-3: #1f232d;
+    --surface-4: #272c38;
+    --border:    #262a34;
+    --border-hi: #363c49;
+
+    /* Text */
+    --text-hi:  #f1f3f5;
+    --text-med: #b8bdc7;
+    --text-lo:  #6b7280;
+
+    /* Typography scale */
+    --text-xs: 11px;
+    --text-sm: 12px;
+    --text-base: 14px;
+    --text-md: 16px;
+    --text-lg: 18px;
+    --text-xl: 22px;
+    --text-2xl: 28px;
+
+    --font-display: 700;
+    --font-strong: 600;
+    --font-body: 500;
+    --font-soft: 400;
+
+    /* Spacing scale */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+
+    /* Radii */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --radius-pill: 999px;
+
+    /* Elevation */
+    --shadow-1: 0 1px 2px rgba(0,0,0,.35);
+    --shadow-2: 0 6px 18px rgba(0,0,0,.45);
+    --shadow-3: 0 14px 36px rgba(0,0,0,.55);
+
+    /* Motion */
+    --ease: cubic-bezier(.2,.7,.2,1);
+    --dur-1: 120ms;
+    --dur-2: 220ms;
+
+    /* Layout */
+    --touch: 44px;
+    --safe-top: env(safe-area-inset-top, 0);
+    --safe-bottom: env(safe-area-inset-bottom, 0);
   }
 
+  @media (prefers-color-scheme: light) {
+    :root {
+      --surface-0: #f6f7f9;
+      --surface-1: #ffffff;
+      --surface-2: #f1f3f7;
+      --surface-3: #e8ebf2;
+      --surface-4: #dde1ea;
+      --border:    #e3e6ee;
+      --border-hi: #ccd2de;
+      --text-hi:  #0e1116;
+      --text-med: #434a55;
+      --text-lo:  #7a828f;
+      --shadow-1: 0 1px 2px rgba(20,25,40,.06);
+      --shadow-2: 0 6px 18px rgba(20,25,40,.08);
+      --shadow-3: 0 14px 36px rgba(20,25,40,.12);
+    }
+  }
+
+  /* ===========================
+     Reset & base
+     =========================== */
+  *, *::before, *::after {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html, body { margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(79,124,255,.10), transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(47,184,102,.08), transparent 60%),
+      var(--surface-0);
+    color: var(--text-hi);
+    font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+    font-size: var(--text-base);
+    font-weight: var(--font-body);
+    line-height: 1.5;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    min-height: 100vh;
+    min-height: 100dvh;
+    font-feature-settings: "ss01", "tnum";
+  }
+  button { font-family: inherit; color: inherit; }
+  :focus-visible {
+    outline: 2px solid var(--color-work);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* ===========================
+     App shell
+     =========================== */
+  .app {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: calc(var(--space-4) + var(--safe-top)) var(--space-4) calc(var(--space-8) + var(--safe-bottom));
+  }
+
+  .appbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px; height: 28px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--color-work), var(--color-home));
+    color: #fff;
+    font-weight: var(--font-display);
+    font-size: var(--text-sm);
+    box-shadow: var(--shadow-1);
+    flex-shrink: 0;
+    transform: translateY(2px);
+  }
+  .brand-title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-display);
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .brand-sub {
+    font-size: var(--text-xs);
+    color: var(--text-lo);
+    font-weight: var(--font-body);
+    letter-spacing: 0.2px;
+  }
+
+  .appbar-actions { display: flex; gap: var(--space-2); }
+
+  /* icon button */
+  .iconbtn {
+    width: var(--touch);
+    height: var(--touch);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-med);
+    cursor: pointer;
+    transition: background var(--dur-1) var(--ease),
+                transform var(--dur-1) var(--ease),
+                color var(--dur-1) var(--ease);
+    font-size: var(--text-md);
+  }
+  .iconbtn:hover { background: var(--surface-2); color: var(--text-hi); }
+  .iconbtn:active { transform: scale(.96); }
+  .iconbtn.primary {
+    background: linear-gradient(135deg, var(--color-work), #6a8dff);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: var(--shadow-1);
+  }
+
+  /* ===========================
+     Stats strip
+     =========================== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+  }
+  .stat {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-height: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--accent, var(--color-work));
+    border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+  }
+  .stat-label {
+    font-size: var(--text-xs);
+    color: var(--text-lo);
+    font-weight: var(--font-strong);
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+  .stat-value {
+    font-size: var(--text-xl);
+    font-weight: var(--font-display);
+    letter-spacing: -0.5px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-hi);
+  }
+  .stat[data-k="doing"]  { --accent: var(--state-doing); }
+  .stat[data-k="todo"]   { --accent: var(--color-inbox); }
+  .stat[data-k="done"]   { --accent: var(--state-done); }
+
+  /* ===========================
+     Segmented filter (category tabs)
+     =========================== */
+  .segmented {
+    display: flex;
+    gap: var(--space-1);
+    padding: var(--space-1);
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    margin-bottom: var(--space-4);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .segmented::-webkit-scrollbar { display: none; }
+  .seg-btn {
+    flex: 1 0 auto;
+    min-height: 36px;
+    padding: 0 var(--space-4);
+    border: none;
+    background: transparent;
+    color: var(--text-med);
+    font-size: var(--text-sm);
+    font-weight: var(--font-strong);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .seg-btn .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--d, var(--text-lo));
+  }
+  .seg-btn[data-cat="all"]    { --d: linear-gradient(135deg, var(--color-work), var(--color-home)); }
+  .seg-btn[data-cat="inbox"]  { --d: var(--color-inbox); }
+  .seg-btn[data-cat="work"]   { --d: var(--color-work); }
+  .seg-btn[data-cat="home"]   { --d: var(--color-home); }
+  .seg-btn[data-cat="hobby"]  { --d: var(--color-hobby); }
+  .seg-btn.active {
+    background: var(--surface-3);
+    color: var(--text-hi);
+  }
+
+  /* toolbar secondary (hide done / actions / help) */
   .toolbar {
     display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
     flex-wrap: wrap;
   }
-  .toolbar button {
-    font-size: 12px;
-    padding: 8px 12px;
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     min-height: 36px;
+    padding: 0 var(--space-3);
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    color: var(--text-med);
+    font-size: var(--text-xs);
+    font-weight: var(--font-strong);
+    cursor: pointer;
+    letter-spacing: .2px;
+    transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
   }
-  .toolbar button.active {
-    background: var(--accent-work);
-    border-color: var(--accent-work);
+  .chip:hover { background: var(--surface-2); }
+  .chip.on {
+    background: color-mix(in srgb, var(--color-work) 18%, transparent);
+    border-color: color-mix(in srgb, var(--color-work) 50%, transparent);
+    color: var(--text-hi);
   }
 
+  /* ===========================
+     Board
+     =========================== */
   .board {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: var(--space-4);
   }
   .column {
-    background: var(--bg-elev);
-    border-radius: 12px;
-    padding: 14px;
+    background: var(--surface-1);
     border: 1px solid var(--border);
-  }
-  .column-header {
+    border-radius: var(--radius-xl);
+    padding: var(--space-3);
+    box-shadow: var(--shadow-1);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid;
+    flex-direction: column;
+    min-width: 0;
   }
-  .column[data-cat="inbox"]  .column-header { border-color: var(--accent-inbox); }
-  .column[data-cat="work"]   .column-header { border-color: var(--accent-work); }
-  .column[data-cat="home"]   .column-header { border-color: var(--accent-home); }
-  .column[data-cat="hobby"]  .column-header { border-color: var(--accent-hobby); }
+  .column[data-cat="inbox"] { --col: var(--color-inbox); }
+  .column[data-cat="work"]  { --col: var(--color-work); }
+  .column[data-cat="home"]  { --col: var(--color-home); }
+  .column[data-cat="hobby"] { --col: var(--color-hobby); }
 
-  .column-title {
-    font-size: 15px;
-    font-weight: 600;
+  .col-header {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: var(--space-3);
+    position: sticky;
+    top: 0;
+    background: var(--surface-1);
+    z-index: 1;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
-  .count {
-    background: var(--bg-card);
-    color: var(--text-dim);
+  .col-mark {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--col);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--col) 18%, transparent);
+    flex-shrink: 0;
+  }
+  .col-title {
+    font-size: var(--text-md);
+    font-weight: var(--font-display);
+    letter-spacing: -0.2px;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .col-count {
+    font-size: var(--text-xs);
+    font-weight: var(--font-strong);
     padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    color: var(--text-med);
+    font-variant-numeric: tabular-nums;
   }
+
   .task-list {
-    min-height: 60px;
-    padding: 4px;
+    min-height: 72px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: 2px;
   }
+
+  /* ===========================
+     Task card
+     =========================== */
   .task {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    margin-bottom: 10px;
-    cursor: grab;
-    transition: transform 0.1s, box-shadow 0.1s, opacity 0.15s;
+    --stripe: var(--state-todo);
     position: relative;
-    min-height: 60px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-3) var(--space-3) calc(var(--space-3) + 4px);
+    cursor: grab;
+    transition: transform var(--dur-1) var(--ease),
+                box-shadow var(--dur-1) var(--ease),
+                opacity var(--dur-2) var(--ease);
+    min-height: 64px;
   }
+  .task::before {
+    content: "";
+    position: absolute;
+    top: 10px; bottom: 10px; left: 4px;
+    width: 3px;
+    border-radius: var(--radius-pill);
+    background: var(--stripe);
+    transition: background var(--dur-2) var(--ease);
+  }
+  .task[data-status="doing"] { --stripe: var(--state-doing); }
+  .task[data-status="done"]  { --stripe: var(--state-done); opacity: .55; }
+  .task[data-status="done"] .task-title { text-decoration: line-through; color: var(--text-med); }
+
   .task:active { cursor: grabbing; }
-  .task.sortable-ghost { opacity: 0.4; background: var(--accent-work); }
-  .task.sortable-chosen { box-shadow: var(--shadow); }
-
-  .task[data-status="doing"] {
-    border-left: 4px solid var(--accent-doing);
-    padding-left: 9px;
-    box-shadow: 0 0 0 1px rgba(138,180,248,0.3);
+  .task.sortable-chosen { box-shadow: var(--shadow-2); transform: scale(1.01); }
+  .task.sortable-ghost  {
+    opacity: .3;
+    background: color-mix(in srgb, var(--col, var(--color-work)) 30%, var(--surface-2));
   }
-  .task[data-status="done"] { opacity: 0.45; }
-  .task[data-status="done"] .task-title { text-decoration: line-through; }
-
   body.hide-done .task[data-status="done"] { display: none; }
 
   .task-header {
     display: flex;
     justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 6px;
+    align-items: flex-start;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+  .task-title {
+    font-size: var(--text-base);
+    font-weight: var(--font-strong);
+    line-height: 1.45;
+    letter-spacing: -0.1px;
+    color: var(--text-hi);
+    flex: 1;
+    min-width: 0;
   }
   .status-btn {
-    background: transparent;
-    border: 1px solid var(--border-strong);
-    color: var(--text-dim);
-    padding: 2px 10px;
-    font-size: 11px;
-    min-height: 26px;
-    border-radius: 12px;
     flex-shrink: 0;
-    cursor: pointer;
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 10px;
+    font-weight: var(--font-display);
+    letter-spacing: .6px;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    font-weight: 600;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-hi);
+    background: transparent;
+    color: var(--text-med);
+    cursor: pointer;
+    transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
   }
-  .status-btn[data-state="todo"]  { color: var(--text-dim); border-color: var(--border-strong); }
-  .status-btn[data-state="doing"] { color: var(--accent-doing); border-color: var(--accent-doing); background: rgba(138,180,248,0.1); }
-  .status-btn[data-state="done"]  { color: var(--accent-home); border-color: var(--accent-home); background: rgba(52,168,83,0.1); }
+  .status-btn[data-state="doing"] {
+    color: var(--state-doing);
+    border-color: color-mix(in srgb, var(--state-doing) 60%, transparent);
+    background: color-mix(in srgb, var(--state-doing) 14%, transparent);
+  }
+  .status-btn[data-state="done"] {
+    color: var(--state-done);
+    border-color: color-mix(in srgb, var(--state-done) 60%, transparent);
+    background: color-mix(in srgb, var(--state-done) 14%, transparent);
+  }
 
-  .task-title {
-    font-weight: 500;
-    line-height: 1.45;
-    margin-bottom: 6px;
-    font-size: 14px;
-    padding-right: 4px;
-  }
   .task-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    margin-top: 6px;
+    gap: 6px;
+    margin-top: 4px;
   }
   .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.06);
-    color: var(--text-dim);
+    font-weight: var(--font-strong);
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--surface-3);
+    color: var(--text-med);
     border: 1px solid var(--border);
+    letter-spacing: .3px;
   }
-  .badge.short { background: rgba(234,67,53,0.15);  color: #ff8a80; border-color: rgba(234,67,53,0.3); }
-  .badge.mid   { background: rgba(251,188,4,0.15);  color: #ffd54f; border-color: rgba(251,188,4,0.3); }
-  .badge.long  { background: rgba(52,168,83,0.15);  color: #81c995; border-color: rgba(52,168,83,0.3); }
-  .badge.proj  { background: rgba(66,133,244,0.15); color: #8ab4f8; border-color: rgba(66,133,244,0.3); }
+  .badge::before {
+    content: "";
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--bc, var(--text-lo));
+  }
+  .badge.short { --bc: var(--h-short); color: var(--h-short); }
+  .badge.mid   { --bc: var(--h-mid);   color: var(--h-mid); }
+  .badge.long  { --bc: var(--h-long);  color: var(--h-long); }
+  .badge.proj  {
+    --bc: transparent;
+    background: color-mix(in srgb, var(--color-work) 12%, var(--surface-3));
+    color: var(--state-doing);
+    border-color: color-mix(in srgb, var(--color-work) 30%, transparent);
+  }
+  .badge.proj::before { display: none; }
 
   .task-actions {
     display: flex;
     gap: 6px;
-    margin-top: 10px;
-    padding-top: 8px;
+    margin-top: var(--space-3);
+    padding-top: var(--space-2);
     border-top: 1px dashed var(--border);
   }
   .task-action {
     flex: 1;
+    min-height: 32px;
+    padding: 0 8px;
     background: transparent;
     border: 1px solid var(--border);
-    color: var(--text-dim);
-    padding: 6px 8px;
+    border-radius: var(--radius-md);
+    color: var(--text-med);
     font-size: 11px;
-    border-radius: 6px;
+    font-weight: var(--font-strong);
     cursor: pointer;
-    min-height: 30px;
+    transition: background var(--dur-1) var(--ease);
   }
-  .task-action:active { background: var(--bg-elev); }
-  .task-action.delete { color: #ff8a80; border-color: rgba(234,67,53,0.3); }
+  .task-action:hover { background: var(--surface-3); }
+  .task-action.delete { color: var(--color-inbox); border-color: color-mix(in srgb, var(--color-inbox) 35%, transparent); }
 
   .empty {
-    color: var(--text-muted);
     text-align: center;
-    padding: 24px 0;
-    font-size: 12px;
+    color: var(--text-lo);
+    font-size: var(--text-xs);
+    padding: var(--space-5) 0;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
   }
 
   .add-task {
+    margin-top: var(--space-3);
     width: 100%;
+    min-height: var(--touch);
     background: transparent;
-    border: 1px dashed var(--border-strong);
-    color: var(--text-muted);
-    padding: 12px;
-    border-radius: 8px;
-    margin-top: 8px;
+    border: 1px dashed var(--border-hi);
+    border-radius: var(--radius-md);
+    color: var(--text-lo);
+    font-size: var(--text-xs);
+    font-weight: var(--font-strong);
     cursor: pointer;
-    font-size: 12px;
-    min-height: 44px;
+    transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
   }
-  .add-task:active { color: var(--text); }
+  .add-task:hover { background: var(--surface-2); color: var(--text-hi); }
 
   .footer {
-    margin-top: 24px;
+    margin-top: var(--space-6);
+    padding: var(--space-4) var(--space-3);
     text-align: center;
-    color: var(--text-muted);
-    font-size: 11px;
-    padding: 0 8px;
-    line-height: 1.6;
+    color: var(--text-lo);
+    font-size: var(--text-xs);
+    line-height: 1.7;
+    border-top: 1px solid var(--border);
   }
   .save-status {
     display: inline-block;
     margin-left: 6px;
-    color: var(--accent-home);
+    color: var(--state-done);
     opacity: 0;
-    transition: opacity 0.3s;
+    transform: translateY(-2px);
+    transition: opacity var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
   }
-  .save-status.show { opacity: 1; }
+  .save-status.show { opacity: 1; transform: translateY(0); }
 
-  /* PC expansion */
+  /* filter hiding columns */
+  .board.filtered .column:not(.match) { display: none; }
+
+  /* ===========================
+     Responsive: tablet (>=768)
+     =========================== */
   @media (min-width: 768px) {
-    body { padding: 24px; font-size: 14px; }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    h1 { font-size: 22px; margin: 0; }
-    .controls {
-      display: flex;
-      gap: 8px;
-      grid-template-columns: none;
-    }
-    button { min-height: 40px; }
+    .app { padding: var(--space-6) var(--space-6) var(--space-8); }
+    .brand-title { font-size: var(--text-xl); }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .stat-value { font-size: var(--text-2xl); }
     .board {
       grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      gap: var(--space-5);
     }
+    .col-title { font-size: var(--text-lg); }
+    .task-title { font-size: var(--text-base); }
   }
+
+  /* ===========================
+     Responsive: desktop (>=1200)
+     =========================== */
   @media (min-width: 1200px) {
+    .app { padding: var(--space-7) var(--space-7) var(--space-8); }
     .board { grid-template-columns: repeat(4, 1fr); }
+    .stats { grid-template-columns: repeat(3, 240px); justify-content: flex-start; }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition: none !important;
+      animation: none !important;
+    }
   }
 </style>
 </head>
 <body>
-  <header>
-    <h1>🧠 자비스 칸반</h1>
-    <div class="controls">
-      <button onclick="exportJSON()">📦 내보내기</button>
-      <button onclick="importJSON()">📥 불러오기</button>
-      <button onclick="resetDefault()">🔄 초기화</button>
-      <button class="primary" onclick="saveAll()">💾 저장<span class="save-status" id="status">✓</span></button>
-    </div>
-  </header>
+  <div class="app">
+    <header class="appbar">
+      <div class="brand">
+        <span class="brand-mark">J</span>
+        <div>
+          <div class="brand-title">자비스 칸반</div>
+          <div class="brand-sub">회사 · 집 · 취미 · 한 화면</div>
+        </div>
+      </div>
+      <div class="appbar-actions">
+        <button class="iconbtn" title="내보내기" aria-label="내보내기" onclick="exportJSON()">⤓</button>
+        <button class="iconbtn" title="불러오기" aria-label="불러오기" onclick="importJSON()">⤒</button>
+        <button class="iconbtn" title="초기화" aria-label="초기화" onclick="resetDefault()">↺</button>
+        <button class="iconbtn primary" title="저장" aria-label="저장" onclick="saveAll()">
+          <span>✓</span><span class="save-status" id="status">·</span>
+        </button>
+      </div>
+    </header>
 
-  <div class="toolbar">
-    <button id="filter-done-btn" onclick="toggleHideDone()">✅ 완료 숨김</button>
-    <button onclick="cycleExpand()">🔧 액션 버튼</button>
-    <button onclick="showHelp()">❓ 도움말</button>
-  </div>
+    <section class="stats" aria-label="요약 통계">
+      <div class="stat" data-k="doing">
+        <span class="stat-label">지금 진행 중</span>
+        <span class="stat-value" id="stat-doing">0</span>
+      </div>
+      <div class="stat" data-k="todo">
+        <span class="stat-label">남은 할 일</span>
+        <span class="stat-value" id="stat-todo">0</span>
+      </div>
+      <div class="stat" data-k="done">
+        <span class="stat-label">완료</span>
+        <span class="stat-value" id="stat-done">0</span>
+      </div>
+    </section>
 
-  <div class="board" id="board">
-    <div class="column" data-cat="inbox">
-      <div class="column-header">
-        <div class="column-title">📥 미분류 <span class="count" id="count-inbox">0</span></div>
-      </div>
-      <div class="task-list" id="list-inbox"></div>
-      <button class="add-task" onclick="addTask('inbox')">+ 할 일 추가</button>
-    </div>
-    <div class="column" data-cat="work">
-      <div class="column-header">
-        <div class="column-title">🏢 회사 <span class="count" id="count-work">0</span></div>
-      </div>
-      <div class="task-list" id="list-work"></div>
-      <button class="add-task" onclick="addTask('work')">+ 할 일 추가</button>
-    </div>
-    <div class="column" data-cat="home">
-      <div class="column-header">
-        <div class="column-title">🏠 집 <span class="count" id="count-home">0</span></div>
-      </div>
-      <div class="task-list" id="list-home"></div>
-      <button class="add-task" onclick="addTask('home')">+ 할 일 추가</button>
-    </div>
-    <div class="column" data-cat="hobby">
-      <div class="column-header">
-        <div class="column-title">🎨 취미 <span class="count" id="count-hobby">0</span></div>
-      </div>
-      <div class="task-list" id="list-hobby"></div>
-      <button class="add-task" onclick="addTask('hobby')">+ 할 일 추가</button>
-    </div>
-  </div>
+    <nav class="segmented" id="segmented" aria-label="카테고리 필터">
+      <button class="seg-btn active" data-cat="all"><span class="dot"></span>전체</button>
+      <button class="seg-btn" data-cat="work"><span class="dot"></span>회사</button>
+      <button class="seg-btn" data-cat="home"><span class="dot"></span>집</button>
+      <button class="seg-btn" data-cat="hobby"><span class="dot"></span>취미</button>
+      <button class="seg-btn" data-cat="inbox"><span class="dot"></span>미분류</button>
+    </nav>
 
-  <div class="footer">
-    <strong>💡 사용법</strong><br>
-    · 상태 배지(TODO / DOING / DONE) 탭하면 순환<br>
-    · 카드 길게 눌러 드래그하면 컬럼 이동<br>
-    · 자동 저장 (브라우저 localStorage)
+    <div class="toolbar">
+      <button class="chip" id="filter-done-btn" onclick="toggleHideDone()">완료 숨김</button>
+      <button class="chip" id="actions-btn" onclick="cycleExpand()">카드 액션</button>
+      <button class="chip" onclick="showHelp()">도움말</button>
+    </div>
+
+    <main class="board" id="board">
+      <section class="column" data-cat="work">
+        <div class="col-header">
+          <span class="col-mark"></span>
+          <div class="col-title">회사</div>
+          <span class="col-count" id="count-work">0</span>
+        </div>
+        <div class="task-list" id="list-work"></div>
+        <button class="add-task" onclick="addTask('work')">+ 회사 할 일 추가</button>
+      </section>
+
+      <section class="column" data-cat="home">
+        <div class="col-header">
+          <span class="col-mark"></span>
+          <div class="col-title">집</div>
+          <span class="col-count" id="count-home">0</span>
+        </div>
+        <div class="task-list" id="list-home"></div>
+        <button class="add-task" onclick="addTask('home')">+ 집 할 일 추가</button>
+      </section>
+
+      <section class="column" data-cat="hobby">
+        <div class="col-header">
+          <span class="col-mark"></span>
+          <div class="col-title">취미</div>
+          <span class="col-count" id="count-hobby">0</span>
+        </div>
+        <div class="task-list" id="list-hobby"></div>
+        <button class="add-task" onclick="addTask('hobby')">+ 취미 할 일 추가</button>
+      </section>
+
+      <section class="column" data-cat="inbox">
+        <div class="col-header">
+          <span class="col-mark"></span>
+          <div class="col-title">미분류</div>
+          <span class="col-count" id="count-inbox">0</span>
+        </div>
+        <div class="task-list" id="list-inbox"></div>
+        <button class="add-task" onclick="addTask('inbox')">+ 미분류에 추가</button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <strong>사용법</strong><br>
+      · 카드 우측 배지(TODO / DOING / DONE) 탭하면 상태 순환<br>
+      · 카드 길게 누른 채 드래그해서 컬럼 이동<br>
+      · 상단 카테고리 탭으로 집중 모드 · 자동 저장
+    </footer>
   </div>
 
 <script>
@@ -371,10 +755,13 @@ const DEFAULT_TASKS = [
 
 const STATUS_ORDER = ['todo', 'doing', 'done'];
 const STATUS_LABEL = { todo: 'TODO', doing: 'DOING', done: 'DONE' };
+const HORIZON_LABEL = { short: '단기', mid: '중기', long: '장기' };
+const CATS = ['work', 'home', 'hobby', 'inbox'];
 
 let tasks = loadTasks();
 let hideDone = localStorage.getItem('kanban-hide-done') === '1';
 let showActions = localStorage.getItem('kanban-show-actions') === '1';
+let activeCat = localStorage.getItem('kanban-active-cat') || 'all';
 
 function loadTasks() {
   const stored = localStorage.getItem(STORAGE_KEY);
@@ -384,7 +771,6 @@ function loadTasks() {
       return parsed.map(t => ({ status: 'todo', ...t }));
     } catch(e) {}
   }
-  // migrate from v1
   const v1 = localStorage.getItem('jarvis-kanban-v1');
   if (v1) {
     try {
@@ -400,27 +786,51 @@ function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   const el = document.getElementById('status');
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 1000);
+  setTimeout(() => el.classList.remove('show'), 900);
 }
 
 function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 function horizonBadge(h) {
-  if (h === 'short') return '<span class="badge short">단기</span>';
-  if (h === 'mid')   return '<span class="badge mid">중기</span>';
-  if (h === 'long')  return '<span class="badge long">장기</span>';
-  return '';
+  if (!h || !HORIZON_LABEL[h]) return '';
+  return `<span class="badge ${h}">${HORIZON_LABEL[h]}</span>`;
 }
 function projBadge(p) { return p ? `<span class="badge proj">${escapeHtml(p)}</span>` : ''; }
 
+function updateStats() {
+  const scope = activeCat === 'all' ? tasks : tasks.filter(t => t.cat === activeCat);
+  const doing = scope.filter(t => t.status === 'doing').length;
+  const todo  = scope.filter(t => (t.status || 'todo') === 'todo').length;
+  const done  = scope.filter(t => t.status === 'done').length;
+  document.getElementById('stat-doing').textContent = doing;
+  document.getElementById('stat-todo').textContent = todo;
+  document.getElementById('stat-done').textContent = done;
+}
+
+function applySegmentedFilter() {
+  document.querySelectorAll('.seg-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === activeCat);
+  });
+  const board = document.getElementById('board');
+  if (activeCat === 'all') {
+    board.classList.remove('filtered');
+    document.querySelectorAll('.column').forEach(c => c.classList.remove('match'));
+  } else {
+    board.classList.add('filtered');
+    document.querySelectorAll('.column').forEach(c => {
+      c.classList.toggle('match', c.dataset.cat === activeCat);
+    });
+  }
+}
+
 function render() {
   document.body.classList.toggle('hide-done', hideDone);
-  document.getElementById('filter-done-btn').classList.toggle('active', hideDone);
+  document.getElementById('filter-done-btn').classList.toggle('on', hideDone);
+  document.getElementById('actions-btn').classList.toggle('on', showActions);
 
-  const cats = ['inbox', 'work', 'home', 'hobby'];
-  cats.forEach(cat => {
+  CATS.forEach(cat => {
     const list = document.getElementById('list-' + cat);
     const items = tasks.filter(t => t.cat === cat);
     const visibleCount = hideDone ? items.filter(t => t.status !== 'done').length : items.length;
@@ -437,25 +847,27 @@ function render() {
           <div class="task-meta">${horizonBadge(t.horizon)}${projBadge(t.proj)}</div>
           ${showActions ? `
           <div class="task-actions">
-            <button class="task-action" onclick="editTask('${t.id}', event)">✏️ 수정</button>
-            <button class="task-action" onclick="cycleHorizon('${t.id}', event)">📅 ${t.horizon || '—'}</button>
-            <button class="task-action delete" onclick="deleteTask('${t.id}', event)">🗑️ 삭제</button>
+            <button class="task-action" onclick="editTask('${t.id}', event)">수정</button>
+            <button class="task-action" onclick="cycleHorizon('${t.id}', event)">${HORIZON_LABEL[t.horizon] || '기간'}</button>
+            <button class="task-action delete" onclick="deleteTask('${t.id}', event)">삭제</button>
           </div>` : ''}
         </div>
       `).join('');
     }
   });
+  applySegmentedFilter();
+  updateStats();
   initSortable();
 }
 
 function initSortable() {
-  const cats = ['inbox', 'work', 'home', 'hobby'];
-  cats.forEach(cat => {
+  CATS.forEach(cat => {
     const el = document.getElementById('list-' + cat);
-    new Sortable(el, {
+    if (el._sortable) el._sortable.destroy();
+    el._sortable = new Sortable(el, {
       group: 'kanban',
-      animation: 150,
-      delay: 150, // mobile long-press to drag
+      animation: 180,
+      delay: 150,
       delayOnTouchOnly: true,
       ghostClass: 'sortable-ghost',
       chosenClass: 'sortable-chosen',
@@ -542,27 +954,23 @@ function cycleExpand() {
   render();
 }
 
+function setActiveCat(cat) {
+  activeCat = cat;
+  localStorage.setItem('kanban-active-cat', cat);
+  applySegmentedFilter();
+  updateStats();
+}
+
 function showHelp() {
   alert([
-    '📘 자비스 칸반 사용법',
+    '자비스 칸반 사용법',
     '',
-    '▶ 상태 변경:',
-    '  카드 우측 상단 TODO/DOING/DONE 배지를 탭하면 순환',
-    '  TODO → DOING → DONE → TODO',
-    '',
-    '▶ 카테고리 이동:',
-    '  카드를 길게 누른 채로 드래그해서 컬럼 간 이동',
-    '',
-    '▶ 액션 버튼:',
-    '  툴바의 "🔧 액션 버튼" 탭하면 각 카드에',
-    '  수정/기간변경/삭제 버튼이 나타남',
-    '',
-    '▶ 완료 숨김:',
-    '  "✅ 완료 숨김" 토글로 DONE 상태 카드 숨기기',
-    '',
-    '▶ 저장:',
-    '  모든 변경은 브라우저 자동 저장 (localStorage)',
-    '  📦 내보내기로 JSON 백업 가능',
+    '• 상태 변경: 카드 우측 상단 TODO / DOING / DONE 배지 탭',
+    '• 카테고리 이동: 카드 길게 눌러 드래그',
+    '• 집중 모드: 상단 카테고리 탭(회사/집/취미/미분류)',
+    '• 카드 액션: 툴바의 "카드 액션" 토글 → 수정·기간·삭제',
+    '• 완료 숨김: 토글로 DONE 카드 감추기',
+    '• 저장: localStorage 자동 저장 · 내보내기는 JSON 파일',
   ].join('\n'));
 }
 
@@ -608,6 +1016,13 @@ function resetDefault() {
   saveTasks();
   render();
 }
+
+/* wire segmented */
+document.getElementById('segmented').addEventListener('click', e => {
+  const btn = e.target.closest('.seg-btn');
+  if (!btn) return;
+  setActiveCat(btn.dataset.cat);
+});
 
 render();
 </script>
