@@ -1504,8 +1504,7 @@ function cycleExpand() {
 function setActiveCat(cat) {
   activeCat = cat;
   localStorage.setItem('kanban-active-cat', cat);
-  applySegmentedFilter();
-  updateStats();
+  render();
 }
 
 function setStatFilter(phase) {
