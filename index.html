@@ -598,6 +598,47 @@
   .cat-indicator.cat-hobby { color: var(--color-hobby); border-color: color-mix(in srgb, var(--color-hobby) 40%, transparent); background: color-mix(in srgb, var(--color-hobby) 12%, transparent); }
   .cat-indicator.cat-inbox { color: var(--color-inbox); border-color: color-mix(in srgb, var(--color-inbox) 40%, transparent); background: color-mix(in srgb, var(--color-inbox) 12%, transparent); }
 
+  /* Tree / subtask nesting */
+  .task-children {
+    margin: 8px 0 0 0;
+    padding-left: 14px;
+    border-left: 2px dashed var(--border);
+    min-height: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .task-children:empty {
+    min-height: 0;
+    padding: 0;
+    border: none;
+    margin: 0;
+  }
+  .task-children.empty-drop {
+    min-height: 8px;
+  }
+  body.dragging .task-children.empty-drop {
+    min-height: 32px;
+    margin-top: 8px;
+    padding: 6px 8px 6px 14px;
+    border: 2px dashed var(--border-hi);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--state-doing, var(--phase-execution)) 6%, transparent);
+  }
+  body.dragging .task-children.empty-drop::after {
+    content: "+ 하위 추가";
+    color: var(--text-lo);
+    font-size: 10px;
+  }
+  .task[data-depth="1"] { border-left-width: 3px; }
+  .task[data-depth="2"] { border-left-width: 3px; opacity: .95; }
+  .child-count {
+    font-size: 10px;
+    color: var(--text-lo);
+    font-weight: var(--font-body);
+    margin-left: 4px;
+  }
+
   .task-header-actions {
     display: flex;
     align-items: center;
@@ -772,7 +813,7 @@
 
   .sheet-footer {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 1fr 1.5fr;
     gap: 8px;
     padding: 12px 20px 20px;
     border-top: 1px solid var(--border);
@@ -794,6 +835,11 @@
     color: #ff8a80;
     border-color: color-mix(in srgb, var(--color-inbox) 40%, transparent);
     background: color-mix(in srgb, var(--color-inbox) 10%, transparent);
+  }
+  .sheet-footer button.subtask {
+    color: var(--phase-planning);
+    border-color: color-mix(in srgb, var(--phase-planning) 40%, transparent);
+    background: color-mix(in srgb, var(--phase-planning) 10%, transparent);
   }
   .sheet-footer button.save {
     background: var(--state-doing);
@@ -1055,6 +1101,7 @@
     </div>
     <div class="sheet-footer">
       <button class="delete" onclick="deleteFromSheet()">삭제</button>
+      <button class="subtask" onclick="addChildTask()">+ 하위</button>
       <button class="save" onclick="saveFromSheet()">저장</button>
     </div>
   </aside>
@@ -1063,23 +1110,23 @@
 const STORAGE_KEY = 'jarvis-kanban-v2';
 
 const DEFAULT_TASKS = [
-  { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD',          phase: 'planning' },
-  { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          phase: 'execution' },
-  { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          phase: 'execution' },
-  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'pump',  horizon: 'mid',   proj: '펌프센터',      phase: 'planning' },
-  { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI',        phase: 'ideation' },
-  { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI',        phase: 'ideation' },
-  { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD',          phase: 'ideation' },
-  { id: 't10', title: '서준이 과제 진행 검토',                 cat: 'home',  horizon: 'short', proj: '서준이공모전', phase: 'execution' },
-  { id: 't11', title: '서준이 데이터 수집 (5개 데이터셋)',     cat: 'home',  horizon: 'mid',   proj: '서준이공모전', phase: 'execution' },
-  { id: 't20', title: 'The Universe 오케스트레이터 설계',     cat: 'hobby', horizon: 'short', proj: 'Universe',     phase: 'planning' },
-  { id: 't21', title: 'llm-wiki 소스 ingest 파이프라인 검증', cat: 'hobby', horizon: 'short', proj: 'Jarvis',       phase: 'execution' },
-  { id: 't22', title: 'The Universe 수익 포인트 정리',        cat: 'hobby', horizon: 'mid',   proj: 'Universe',     phase: 'planning' },
-  { id: 't23', title: 'The Universe 슬라이드 업데이트',       cat: 'hobby', horizon: 'mid',   proj: 'Universe',     phase: 'complete' },
-  { id: 't24', title: 'Resonance POC 8주 계획',              cat: 'hobby', horizon: 'long',  proj: 'Resonance',    phase: 'planning' },
-  { id: 't25', title: '바이브 게임즈',                        cat: 'hobby', horizon: 'long',  proj: '게임',          phase: 'ideation' },
-  { id: 't26', title: 'AI 개발팀 (에이전트 설계자 조직)',     cat: 'hobby', horizon: 'long',  proj: 'AI팀',          phase: 'ideation' },
-  { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis',       phase: 'planning' },
+  { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD',          phase: 'planning',  parentId: null },
+  { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          phase: 'execution', parentId: null },
+  { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          phase: 'execution', parentId: null },
+  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'pump',  horizon: 'mid',   proj: '펌프센터',      phase: 'planning',  parentId: null },
+  { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI',        phase: 'ideation',  parentId: null },
+  { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI',        phase: 'ideation',  parentId: null },
+  { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD',          phase: 'ideation',  parentId: null },
+  { id: 't10', title: '서준이 과제 진행 검토',                 cat: 'home',  horizon: 'short', proj: '서준이공모전', phase: 'execution', parentId: null },
+  { id: 't11', title: '서준이 데이터 수집 (5개 데이터셋)',     cat: 'home',  horizon: 'mid',   proj: '서준이공모전', phase: 'execution', parentId: 't10' },
+  { id: 't20', title: 'The Universe 오케스트레이터 설계',     cat: 'hobby', horizon: 'short', proj: 'Universe',     phase: 'planning',  parentId: null },
+  { id: 't21', title: 'llm-wiki 소스 ingest 파이프라인 검증', cat: 'hobby', horizon: 'short', proj: 'Jarvis',       phase: 'execution', parentId: null },
+  { id: 't22', title: 'The Universe 수익 포인트 정리',        cat: 'hobby', horizon: 'mid',   proj: 'Universe',     phase: 'planning',  parentId: 't20' },
+  { id: 't23', title: 'The Universe 슬라이드 업데이트',       cat: 'hobby', horizon: 'mid',   proj: 'Universe',     phase: 'complete',  parentId: 't20' },
+  { id: 't24', title: 'Resonance POC 8주 계획',              cat: 'hobby', horizon: 'long',  proj: 'Resonance',    phase: 'planning',  parentId: null },
+  { id: 't25', title: '바이브 게임즈',                        cat: 'hobby', horizon: 'long',  proj: '게임',          phase: 'ideation',  parentId: null },
+  { id: 't26', title: 'AI 개발팀 (에이전트 설계자 조직)',     cat: 'hobby', horizon: 'long',  proj: 'AI팀',          phase: 'ideation',  parentId: null },
+  { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis',       phase: 'planning',  parentId: null },
 ];
 
 const HORIZON_LABEL = { short: '단기', mid: '중기', long: '장기' };
@@ -1112,12 +1159,11 @@ function loadTasks() {
   const migrate = arr => arr.map(t => {
     let phase = t.phase || 'execution';
     if (PHASE_MIGRATE[phase]) phase = PHASE_MIGRATE[phase];
-    // promote status=done/cancelled into phase if phase is still active
     if (t.status && STATUS_TO_PHASE[t.status] && phase !== 'complete' && phase !== 'cancelled') {
       phase = STATUS_TO_PHASE[t.status];
     }
     const { status, ...rest } = t;
-    return { ...rest, phase };
+    return { parentId: null, ...rest, phase };
   });
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) {
@@ -1228,37 +1274,49 @@ function render() {
   const ax = AXIS[viewMode];
   const DEFAULT_CAT   = 'inbox';
   const DEFAULT_PHASE = 'execution';
-  ax.values.forEach(v => {
-    const list = document.getElementById('list-' + v);
-    // Primary grouping: column by current axis
-    let items = tasks.filter(t => {
-      const val = t[ax.key] || (ax.key === 'cat' ? DEFAULT_CAT : DEFAULT_PHASE);
-      return val === v;
-    });
-    // Apply segmented (cat) filter — orthogonal to view mode
-    if (activeCat !== 'all') {
-      items = items.filter(t => (t.cat || DEFAULT_CAT) === activeCat);
-    }
-    // Apply stat (phase) filter — orthogonal to view mode
-    if (statFilter) {
-      items = items.filter(t => (t.phase || DEFAULT_PHASE) === statFilter);
-    }
-    const visibleCount = hideDone ? items.filter(t => t.phase !== 'complete' && t.phase !== 'cancelled').length : items.length;
-    document.getElementById('count-' + v).textContent = visibleCount;
-    if (items.length === 0) {
-      list.innerHTML = '<div class="empty">비어있음</div>';
-    } else {
-      list.innerHTML = items.map(t => {
-        const ph = t.phase || 'execution';
-        // In context view: phase-btn shows phase (column shows cat).
-        // In phase view: cat indicator shows cat (column shows phase, phase-btn is redundant → hide).
-        const headerBtn = viewMode === 'context'
-          ? `<button class="phase-btn" data-action="cycle-phase" data-task-id="${t.id}" data-phase="${ph}">${AXIS.phase.emoji[ph]} ${AXIS.phase.labels[ph]}</button>`
-          : `<span class="cat-indicator cat-${t.cat}">${AXIS.context.emoji[t.cat] || ''} ${AXIS.context.labels[t.cat] || ''}</span>`;
-        return `
-        <div class="task" data-id="${t.id}" data-phase="${ph}">
+
+  // Build parent→children index
+  const childrenOf = new Map();
+  tasks.forEach(t => {
+    const pid = t.parentId || null;
+    if (!childrenOf.has(pid)) childrenOf.set(pid, []);
+    childrenOf.get(pid).push(t);
+  });
+  const getChildren = pid => childrenOf.get(pid) || [];
+
+  // Recursive subtree collector (for visibility check including descendants)
+  function anyInSubtreeMatches(task, predicate) {
+    if (predicate(task)) return true;
+    return getChildren(task.id).some(c => anyInSubtreeMatches(c, predicate));
+  }
+
+  function passFilters(t) {
+    if (activeCat !== 'all' && (t.cat || DEFAULT_CAT) !== activeCat) return false;
+    if (statFilter && (t.phase || DEFAULT_PHASE) !== statFilter) return false;
+    if (hideDone && (t.phase === 'complete' || t.phase === 'cancelled')) return false;
+    return true;
+  }
+
+  // Render a task + its children recursively. Children shown only when they
+  // themselves (or descendants) pass filters.
+  function renderTask(t, depth) {
+    const ph = t.phase || DEFAULT_PHASE;
+    const headerBtn = viewMode === 'context'
+      ? `<button class="phase-btn" data-action="cycle-phase" data-task-id="${t.id}" data-phase="${ph}">${AXIS.phase.emoji[ph]} ${AXIS.phase.labels[ph]}</button>`
+      : `<span class="cat-indicator cat-${t.cat}">${AXIS.context.emoji[t.cat] || ''} ${AXIS.context.labels[t.cat] || ''}</span>`;
+
+    const kids = getChildren(t.id);
+    const visibleKids = kids.filter(k => anyInSubtreeMatches(k, passFilters));
+
+    const childrenHtml = visibleKids.length > 0
+      ? `<div class="task-children" data-parent-id="${t.id}">${visibleKids.map(c => renderTask(c, depth + 1)).join('')}</div>`
+      : `<div class="task-children empty-drop" data-parent-id="${t.id}"></div>`;
+
+    return `
+      <div class="task" data-id="${t.id}" data-phase="${ph}" data-depth="${depth}" ${t.parentId ? `data-parent="${t.parentId}"` : ''}>
+        <div class="task-row">
           <div class="task-header">
-            <div class="task-title">${escapeHtml(t.title)}</div>
+            <div class="task-title">${escapeHtml(t.title)}${kids.length > 0 ? ` <span class="child-count">· ${kids.length}</span>` : ''}</div>
             <div class="task-header-actions">
               ${headerBtn}
               <button class="drag-handle" data-action="nop" aria-label="드래그">⋮⋮</button>
@@ -1269,7 +1327,36 @@ function render() {
             ${projBadge(t.proj)}
           </div>
         </div>
-      `;}).join('');
+        ${childrenHtml}
+      </div>
+    `;
+  }
+
+  ax.values.forEach(v => {
+    const list = document.getElementById('list-' + v);
+    // Root tasks: parentId=null AND axis value matches column
+    const roots = tasks.filter(t => {
+      if (t.parentId) return false;
+      const val = t[ax.key] || (ax.key === 'cat' ? DEFAULT_CAT : DEFAULT_PHASE);
+      return val === v;
+    });
+    // Only show roots whose subtree contains at least one matching task
+    const visibleRoots = roots.filter(r => anyInSubtreeMatches(r, passFilters));
+    // Count visible tasks (including descendants) per column
+    const visibleCount = visibleRoots.reduce((acc, r) => {
+      let n = 0;
+      (function walk(t) {
+        if (passFilters(t)) n++;
+        getChildren(t.id).forEach(walk);
+      })(r);
+      return acc + n;
+    }, 0);
+    document.getElementById('count-' + v).textContent = visibleCount;
+
+    if (visibleRoots.length === 0) {
+      list.innerHTML = '<div class="empty">비어있음</div>';
+    } else {
+      list.innerHTML = visibleRoots.map(r => renderTask(r, 0)).join('');
     }
   });
   applySegmentedFilter();
@@ -1279,32 +1366,79 @@ function render() {
 
 function initSortable() {
   const ax = AXIS[viewMode];
+
+  const handleDrop = (evt) => {
+    const id = evt.item.dataset.id;
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+
+    const toEl = evt.to;
+
+    // Dropped into a column list → becomes a root of that column
+    if (toEl.classList.contains('task-list')) {
+      const newVal = toEl.id.replace('list-', '');
+      task.parentId = null;
+      task[ax.key] = newVal;
+    }
+    // Dropped into a task-children zone → becomes child of that task
+    else if (toEl.classList.contains('task-children')) {
+      const newParentId = toEl.dataset.parentId;
+      // prevent cycle: can't drop into own descendant
+      if (newParentId === id || isDescendantOf(newParentId, id)) {
+        return render(); // rollback visual
+      }
+      const parentTask = tasks.find(t => t.id === newParentId);
+      if (parentTask) {
+        task.parentId = newParentId;
+        // inherit parent's column axis value
+        task[ax.key] = parentTask[ax.key];
+      }
+    }
+
+    saveTasks();
+    render();
+  };
+
+  // Cycle guard helper
+  function isDescendantOf(potentialDescId, ancestorId) {
+    let cur = tasks.find(t => t.id === potentialDescId);
+    while (cur) {
+      if (cur.parentId === ancestorId) return true;
+      cur = cur.parentId ? tasks.find(t => t.id === cur.parentId) : null;
+    }
+    return false;
+  }
+
+  const commonOpts = {
+    group: 'kanban',
+    animation: 180,
+    handle: '.drag-handle',
+    ghostClass: 'sortable-ghost',
+    chosenClass: 'sortable-chosen',
+    fallbackOnBody: true,
+    swapThreshold: 0.55,
+    invertSwap: true,
+    onStart: () => document.body.classList.add('dragging'),
+    onEnd: (evt) => {
+      document.body.classList.remove('dragging');
+      handleDrop(evt);
+    }
+  };
+
+  // Column-level lists
   ax.values.forEach(v => {
     const el = document.getElementById('list-' + v);
     if (!el) return;
     if (el._sortable) el._sortable.destroy();
-    el._sortable = new Sortable(el, {
-      group: 'kanban',
-      animation: 180,
-      handle: '.drag-handle',
-      ghostClass: 'sortable-ghost',
-      chosenClass: 'sortable-chosen',
-      onEnd: evt => {
-        const id = evt.item.dataset.id;
-        const newVal = evt.to.id.replace('list-', '');
-        const task = tasks.find(t => t.id === id);
-        if (task) task[ax.key] = newVal;
-        const newOrder = Array.from(evt.to.children)
-          .filter(c => c.classList.contains('task'))
-          .map(c => c.dataset.id);
-        const others = tasks.filter(t => t[ax.key] !== newVal);
-        const inCol = newOrder.map(id => tasks.find(t => t.id === id)).filter(Boolean);
-        tasks = [...others, ...inCol];
-        saveTasks();
-        render();
-      }
-    });
+    el._sortable = new Sortable(el, commonOpts);
   });
+
+  // Nested sub-task drop zones
+  document.querySelectorAll('.task-children').forEach(zone => {
+    if (zone._sortable) zone._sortable.destroy();
+    zone._sortable = new Sortable(zone, commonOpts);
+  });
+
 }
 
 function cyclePhase(id) {
@@ -1477,11 +1611,45 @@ function deleteFromSheet() {
   if (!editingId) return;
   const task = tasks.find(t => t.id === editingId);
   if (!task) return;
-  if (!confirm(`"${task.title || '(제목 없음)'}" 삭제하시겠습니까?`)) return;
-  tasks = tasks.filter(t => t.id !== editingId);
+  // Collect all descendants
+  const toDelete = new Set([editingId]);
+  function collectDescendants(parentId) {
+    tasks.filter(t => t.parentId === parentId).forEach(c => {
+      toDelete.add(c.id);
+      collectDescendants(c.id);
+    });
+  }
+  collectDescendants(editingId);
+  const descCount = toDelete.size - 1;
+  const msg = descCount > 0
+    ? `"${task.title || '(제목 없음)'}" 과 하위 ${descCount}개를 모두 삭제하시겠습니까?`
+    : `"${task.title || '(제목 없음)'}" 삭제하시겠습니까?`;
+  if (!confirm(msg)) return;
+  tasks = tasks.filter(t => !toDelete.has(t.id));
   saveTasks();
   closeEdit();
   render();
+}
+
+function addChildTask() {
+  if (!editingId) return;
+  const parent = tasks.find(t => t.id === editingId);
+  if (!parent) return;
+  const id = 't' + Date.now();
+  const newTask = {
+    id,
+    title: '',
+    cat: parent.cat,
+    phase: parent.phase,
+    horizon: parent.horizon || 'short',
+    proj: parent.proj || '',
+    parentId: parent.id
+  };
+  tasks.push(newTask);
+  saveTasks();
+  closeEdit();
+  render();
+  openEdit(id);
 }
 
 // ESC to close
