@@ -1,0 +1,12 @@
+# Wrangler (Cloudflare) — cache and local state
+.wrangler/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
