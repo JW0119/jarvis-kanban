@@ -633,13 +633,19 @@
     border-radius: var(--radius-xl) var(--radius-xl) 0 0;
     z-index: 101;
     transform: translateY(100%);
-    transition: transform var(--dur-2) var(--ease);
+    transition: transform var(--dur-2) var(--ease), visibility var(--dur-2);
     max-height: 82vh;
     overflow-y: auto;
     padding-bottom: env(safe-area-inset-bottom, 0);
     box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+    visibility: hidden;
+    pointer-events: none;
   }
-  .sheet.open { transform: translateY(0); }
+  .sheet.open {
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
 
   .sheet-grip {
     width: 48px;
@@ -782,13 +788,13 @@
       left: 50%;
       right: auto;
       bottom: 50%;
-      transform: translate(-50%, 60%);
+      transform: translate(-50%, calc(50% + 40px)) scale(.96);
       width: min(520px, 90vw);
       max-height: 82vh;
       border-radius: var(--radius-xl);
       border: 1px solid var(--border);
     }
-    .sheet.open { transform: translate(-50%, 50%); }
+    .sheet.open { transform: translate(-50%, 50%) scale(1); }
     .sheet-grip { display: none; }
   }
 
