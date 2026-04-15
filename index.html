@@ -581,6 +581,23 @@
   .phase-btn[data-phase="complete"]  { color: var(--phase-complete);  border-color: color-mix(in srgb, var(--phase-complete) 50%, transparent);  background: color-mix(in srgb, var(--phase-complete) 12%, transparent); }
   .phase-btn[data-phase="cancelled"] { color: var(--phase-cancelled); border-color: color-mix(in srgb, var(--phase-cancelled) 50%, transparent); background: color-mix(in srgb, var(--phase-cancelled) 12%, transparent); text-decoration: line-through; }
 
+  .cat-indicator {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: var(--font-display);
+    border: 1px solid var(--border);
+    background: var(--surface-3);
+    color: var(--text-med);
+    white-space: nowrap;
+  }
+  .cat-indicator.cat-work  { color: var(--color-work);  border-color: color-mix(in srgb, var(--color-work) 40%, transparent);  background: color-mix(in srgb, var(--color-work) 12%, transparent); }
+  .cat-indicator.cat-pump  { color: var(--color-pump);  border-color: color-mix(in srgb, var(--color-pump) 40%, transparent);  background: color-mix(in srgb, var(--color-pump) 12%, transparent); }
+  .cat-indicator.cat-home  { color: var(--color-home);  border-color: color-mix(in srgb, var(--color-home) 40%, transparent);  background: color-mix(in srgb, var(--color-home) 12%, transparent); }
+  .cat-indicator.cat-hobby { color: var(--color-hobby); border-color: color-mix(in srgb, var(--color-hobby) 40%, transparent); background: color-mix(in srgb, var(--color-hobby) 12%, transparent); }
+  .cat-indicator.cat-inbox { color: var(--color-inbox); border-color: color-mix(in srgb, var(--color-inbox) 40%, transparent); background: color-mix(in srgb, var(--color-inbox) 12%, transparent); }
+
   .task-header-actions {
     display: flex;
     align-items: center;
@@ -891,8 +908,8 @@
     line-height: 1.7;
     border-top: 1px solid var(--border);
   }
-  /* filter hiding columns */
-  .board.filtered .column:not(.match) { display: none; }
+  /* empty column in filtered view */
+  .column.empty-via-filter { opacity: .45; }
 
   /* ===========================
      Responsive: tablet (>=768)
@@ -1142,10 +1159,11 @@ function phaseBadge(phase) {
 }
 
 function updateStats() {
-  const ax = AXIS[viewMode];
+  // Stats reflect what is visible: respect cat filter but NOT phase filter
+  // (so users can see total count per phase and toggle between them).
   const scope = activeCat === 'all'
     ? tasks
-    : tasks.filter(t => t[ax.key] === activeCat);
+    : tasks.filter(t => (t.cat || 'inbox') === activeCat);
   const byPhase = p => scope.filter(t => (t.phase || 'execution') === p).length;
   document.getElementById('stat-execution').textContent = byPhase('execution');
   document.getElementById('stat-planning').textContent  = byPhase('planning');
@@ -1157,8 +1175,9 @@ function updateStats() {
   });
 }
 
+// Segmented filter is ALWAYS by context (cat), regardless of view mode
 function renderSegmentedFilter() {
-  const ax = AXIS[viewMode];
+  const ax = AXIS.context;
   const seg = document.getElementById('segmented');
   const parts = [`<button class="seg-btn" data-val="all"><span class="dot"></span>전체</button>`];
   ax.values.forEach(v => {
@@ -1174,18 +1193,6 @@ function applySegmentedFilter() {
   document.querySelectorAll('#segmented .seg-btn').forEach(b => {
     b.classList.toggle('active', b.dataset.val === activeCat);
   });
-  const board = document.getElementById('board');
-  const ax = AXIS[viewMode];
-  if (activeCat === 'all') {
-    board.classList.remove('filtered');
-    document.querySelectorAll('.column').forEach(c => c.classList.remove('match'));
-  } else {
-    board.classList.add('filtered');
-    document.querySelectorAll('.column').forEach(c => {
-      const match = c.dataset[ax.key === 'cat' ? 'cat' : 'phase'] === activeCat;
-      c.classList.toggle('match', match);
-    });
-  }
 }
 
 function renderBoard() {
@@ -1219,10 +1226,23 @@ function render() {
   renderSegmentedFilter();
 
   const ax = AXIS[viewMode];
+  const DEFAULT_CAT   = 'inbox';
+  const DEFAULT_PHASE = 'execution';
   ax.values.forEach(v => {
     const list = document.getElementById('list-' + v);
-    let items = tasks.filter(t => (t[ax.key] || ax.values[ax.values.length - 1]) === v);
-    if (statFilter) items = items.filter(t => (t.phase || 'execution') === statFilter);
+    // Primary grouping: column by current axis
+    let items = tasks.filter(t => {
+      const val = t[ax.key] || (ax.key === 'cat' ? DEFAULT_CAT : DEFAULT_PHASE);
+      return val === v;
+    });
+    // Apply segmented (cat) filter — orthogonal to view mode
+    if (activeCat !== 'all') {
+      items = items.filter(t => (t.cat || DEFAULT_CAT) === activeCat);
+    }
+    // Apply stat (phase) filter — orthogonal to view mode
+    if (statFilter) {
+      items = items.filter(t => (t.phase || DEFAULT_PHASE) === statFilter);
+    }
     const visibleCount = hideDone ? items.filter(t => t.phase !== 'complete' && t.phase !== 'cancelled').length : items.length;
     document.getElementById('count-' + v).textContent = visibleCount;
     if (items.length === 0) {
@@ -1230,17 +1250,21 @@ function render() {
     } else {
       list.innerHTML = items.map(t => {
         const ph = t.phase || 'execution';
+        // In context view: phase-btn shows phase (column shows cat).
+        // In phase view: cat indicator shows cat (column shows phase, phase-btn is redundant → hide).
+        const headerBtn = viewMode === 'context'
+          ? `<button class="phase-btn" data-action="cycle-phase" data-task-id="${t.id}" data-phase="${ph}">${AXIS.phase.emoji[ph]} ${AXIS.phase.labels[ph]}</button>`
+          : `<span class="cat-indicator cat-${t.cat}">${AXIS.context.emoji[t.cat] || ''} ${AXIS.context.labels[t.cat] || ''}</span>`;
         return `
         <div class="task" data-id="${t.id}" data-phase="${ph}">
           <div class="task-header">
             <div class="task-title">${escapeHtml(t.title)}</div>
             <div class="task-header-actions">
-              <button class="phase-btn" data-action="cycle-phase" data-task-id="${t.id}" data-phase="${ph}">${AXIS.phase.emoji[ph]} ${AXIS.phase.labels[ph]}</button>
+              ${headerBtn}
               <button class="drag-handle" data-action="nop" aria-label="드래그">⋮⋮</button>
             </div>
           </div>
           <div class="task-meta">
-            ${viewMode === 'context' ? phaseBadge(ph) : catBadge(t.cat)}
             ${horizonBadge(t.horizon)}
             ${projBadge(t.proj)}
           </div>
