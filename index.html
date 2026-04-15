@@ -15,6 +15,7 @@
     /* Semantic color (category) */
     --color-inbox: #e84c5c;
     --color-work:  #4f7cff;
+    --color-pump:  #00b8d4;
     --color-home:  #2fb866;
     --color-hobby: #f5a623;
 
@@ -307,6 +308,7 @@
   .seg-btn[data-cat="all"]    { --d: linear-gradient(135deg, var(--color-work), var(--color-home)); }
   .seg-btn[data-cat="inbox"]  { --d: var(--color-inbox); }
   .seg-btn[data-cat="work"]   { --d: var(--color-work); }
+  .seg-btn[data-cat="pump"]   { --d: var(--color-pump); }
   .seg-btn[data-cat="home"]   { --d: var(--color-home); }
   .seg-btn[data-cat="hobby"]  { --d: var(--color-hobby); }
   .seg-btn.active {
@@ -364,6 +366,7 @@
   }
   .column[data-cat="inbox"] { --col: var(--color-inbox); }
   .column[data-cat="work"]  { --col: var(--color-work); }
+  .column[data-cat="pump"]  { --col: var(--color-pump); }
   .column[data-cat="home"]  { --col: var(--color-home); }
   .column[data-cat="hobby"] { --col: var(--color-hobby); }
 
@@ -648,6 +651,7 @@
     font-weight: var(--font-display);
   }
   .seg-opt[data-v="work"].active      { --accent: var(--color-work); }
+  .seg-opt[data-v="pump"].active      { --accent: var(--color-pump); }
   .seg-opt[data-v="home"].active      { --accent: var(--color-home); }
   .seg-opt[data-v="hobby"].active     { --accent: var(--color-hobby); }
   .seg-opt[data-v="inbox"].active     { --accent: var(--color-inbox); }
@@ -831,8 +835,11 @@
      =========================== */
   @media (min-width: 1200px) {
     .app { padding: var(--space-7) var(--space-7) var(--space-8); }
-    .board { grid-template-columns: repeat(4, 1fr); }
+    .board { grid-template-columns: repeat(3, 1fr); }
     .stats { grid-template-columns: repeat(4, 220px); justify-content: flex-start; }
+  }
+  @media (min-width: 1500px) {
+    .board { grid-template-columns: repeat(5, 1fr); }
   }
 
   /* Reduced motion */
@@ -886,6 +893,7 @@
     <nav class="segmented" id="segmented" aria-label="카테고리 필터">
       <button class="seg-btn active" data-cat="all"><span class="dot"></span>전체</button>
       <button class="seg-btn" data-cat="work"><span class="dot"></span>회사</button>
+      <button class="seg-btn" data-cat="pump"><span class="dot"></span>펌프센터</button>
       <button class="seg-btn" data-cat="home"><span class="dot"></span>집</button>
       <button class="seg-btn" data-cat="hobby"><span class="dot"></span>취미</button>
       <button class="seg-btn" data-cat="inbox"><span class="dot"></span>미분류</button>
@@ -906,6 +914,16 @@
         </div>
         <div class="task-list" id="list-work"></div>
         <button class="add-task" onclick="addTask('work')">+ 회사 할 일 추가</button>
+      </section>
+
+      <section class="column" data-cat="pump">
+        <div class="col-header">
+          <span class="col-mark"></span>
+          <div class="col-title">펌프센터</div>
+          <span class="col-count" id="count-pump">0</span>
+        </div>
+        <div class="task-list" id="list-pump"></div>
+        <button class="add-task" onclick="addTask('pump')">+ 펌프센터 할 일 추가</button>
       </section>
 
       <section class="column" data-cat="home">
@@ -963,8 +981,9 @@
       </div>
       <div class="field-group">
         <div class="field-label">카테고리</div>
-        <div class="seg-field cols-4" id="sheet-seg-cat">
+        <div class="seg-field cols-3" id="sheet-seg-cat">
           <button class="seg-opt" data-v="work">회사</button>
+          <button class="seg-opt" data-v="pump">펌프센터</button>
           <button class="seg-opt" data-v="home">집</button>
           <button class="seg-opt" data-v="hobby">취미</button>
           <button class="seg-opt" data-v="inbox">미분류</button>
@@ -1005,7 +1024,7 @@ const DEFAULT_TASKS = [
   { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD',          status: 'todo' },
   { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo' },
   { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo' },
-  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'work',  horizon: 'mid',   proj: '펌프센터',      status: 'todo' },
+  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'pump',  horizon: 'mid',   proj: '펌프센터',      status: 'todo' },
   { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo' },
   { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo' },
   { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD',          status: 'todo' },
@@ -1024,7 +1043,7 @@ const DEFAULT_TASKS = [
 const STATUS_ORDER = ['todo', 'doing', 'done', 'cancelled'];
 const STATUS_LABEL = { todo: 'TODO', doing: 'DOING', done: 'DONE', cancelled: '취소' };
 const HORIZON_LABEL = { short: '단기', mid: '중기', long: '장기' };
-const CATS = ['work', 'home', 'hobby', 'inbox'];
+const CATS = ['work', 'pump', 'home', 'hobby', 'inbox'];
 
 let tasks = loadTasks();
 let hideDone = localStorage.getItem('kanban-hide-done') === '1';
