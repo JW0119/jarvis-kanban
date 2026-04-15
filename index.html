@@ -125,6 +125,13 @@
   }
   html, body { margin: 0; padding: 0; }
   html { -webkit-text-size-adjust: 100%; }
+
+  /* iOS touch response: eliminate 300ms delay + prevent accidental double-tap zoom */
+  button, a, .task, .sheet-backdrop, .sheet-close, .sheet-grip,
+  .seg-opt, .seg-btn, .view-btn, .status-btn, .drag-handle,
+  .add-task, .chip {
+    touch-action: manipulation;
+  }
   body {
     background:
       radial-gradient(1200px 600px at 10% -10%, rgba(79,124,255,.10), transparent 60%),
@@ -1234,12 +1241,12 @@ function render() {
       list.innerHTML = '<div class="empty">비어있음</div>';
     } else {
       list.innerHTML = items.map(t => `
-        <div class="task" data-id="${t.id}" data-status="${t.status || 'todo'}" onclick="openEdit('${t.id}', event)">
+        <div class="task" data-id="${t.id}" data-status="${t.status || 'todo'}">
           <div class="task-header">
             <div class="task-title">${escapeHtml(t.title)}</div>
             <div class="task-header-actions">
-              <button class="status-btn" data-state="${t.status || 'todo'}" onclick="cycleStatus('${t.id}', event)">${STATUS_LABEL[t.status || 'todo']}</button>
-              <button class="drag-handle" aria-label="드래그" onclick="event.stopPropagation()">⋮⋮</button>
+              <button class="status-btn" data-action="cycle-status" data-id="${t.id}" data-state="${t.status || 'todo'}">${STATUS_LABEL[t.status || 'todo']}</button>
+              <button class="drag-handle" data-action="nop" aria-label="드래그">⋮⋮</button>
             </div>
           </div>
           <div class="task-meta">
@@ -1286,8 +1293,8 @@ function initSortable() {
   });
 }
 
-function cycleStatus(id, evt) {
-  if (evt) evt.stopPropagation();
+function cycleStatus(id) {
+  if (editingId) return; // guard: never cycle while editing
   const task = tasks.find(t => t.id === id);
   if (!task) return;
   const cur = task.status || 'todo';
@@ -1360,12 +1367,8 @@ function setViewMode(mode) {
 /* ── Edit Sheet ──────────────────────────────────────────── */
 let editingId = null;
 
-function openEdit(id, evt) {
-  if (evt) {
-    // don't open when tapping a button inside the card
-    const tag = evt.target.tagName;
-    if (tag === 'BUTTON' || evt.target.closest('button')) return;
-  }
+function openEdit(id) {
+  if (editingId) return; // don't reopen if already open
   const task = tasks.find(t => t.id === id);
   if (!task) return;
   editingId = id;
@@ -1407,6 +1410,33 @@ document.addEventListener('click', e => {
   container.querySelectorAll('.seg-opt').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 });
+
+// Task / board delegation — single handler, prevents iOS double-fire
+document.getElementById('board').addEventListener('click', e => {
+  // Action button? handle it and stop.
+  const actionBtn = e.target.closest('[data-action]');
+  if (actionBtn) {
+    e.stopPropagation();
+    e.preventDefault();
+    const action = actionBtn.dataset.action;
+    const id = actionBtn.dataset.id;
+    if (action === 'cycle-status' && id) cycleStatus(id);
+    // 'nop' (drag handle): do nothing on click; drag starts on pointerdown via SortableJS
+    return;
+  }
+  // Regular card tap?
+  const card = e.target.closest('.task');
+  if (card && card.dataset.id) {
+    if (editingId) return; // ignore if sheet already open
+    openEdit(card.dataset.id);
+  }
+});
+
+// pointerdown guard — iOS 특히 touchstart에서 부모 이벤트 차단
+document.getElementById('board').addEventListener('pointerdown', e => {
+  const btn = e.target.closest('[data-action]');
+  if (btn) e.stopPropagation();
+}, true);
 
 function closeEdit() {
   document.getElementById('sheet-backdrop').classList.remove('open');
