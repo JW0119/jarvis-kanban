@@ -1524,13 +1524,6 @@ function resetDefault() {
   render();
 }
 
-/* wire segmented */
-document.getElementById('segmented').addEventListener('click', e => {
-  const btn = e.target.closest('.seg-btn');
-  if (!btn) return;
-  setActiveCat(btn.dataset.cat);
-});
-
 render();
 </script>
 </body>
