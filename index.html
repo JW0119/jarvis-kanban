@@ -23,14 +23,8 @@
     --phase-ideation:   #a855f7;
     --phase-planning:   #f97316;
     --phase-execution:  #84cc16;
-    --phase-validation: #ec4899;
-    --phase-wrap:       #14b8a6;
-
-    /* State */
-    --state-todo:      #9aa0a6;
-    --state-doing:     #8ab4f8;
-    --state-done:      #34a853;
-    --state-cancelled: #6b7280;
+    --phase-complete:   #14b8a6;
+    --phase-cancelled:  #6b7280;
 
     /* Horizon */
     --h-short: #ff8a80;
@@ -128,7 +122,7 @@
 
   /* iOS touch response: eliminate 300ms delay + prevent accidental double-tap zoom */
   button, a, .task, .sheet-backdrop, .sheet-close, .sheet-grip,
-  .seg-opt, .seg-btn, .view-btn, .status-btn, .drag-handle,
+  .seg-opt, .seg-btn, .view-btn, .phase-btn, .drag-handle, .stat,
   .add-task, .chip {
     touch-action: manipulation;
   }
@@ -278,10 +272,25 @@
     font-variant-numeric: tabular-nums;
     color: var(--text-hi);
   }
-  .stat[data-k="doing"]      { --accent: var(--state-doing); }
-  .stat[data-k="todo"]       { --accent: var(--color-inbox); }
-  .stat[data-k="done"]       { --accent: var(--state-done); }
-  .stat[data-k="cancelled"]  { --accent: var(--state-cancelled); }
+  .stat {
+    background: none;
+    border: 1px solid var(--border);
+    font-family: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .stat:hover { border-color: var(--accent, var(--border-hi)); }
+  .stat:active { transform: scale(0.98); }
+  .stat.active {
+    background: color-mix(in srgb, var(--accent, var(--border-hi)) 16%, transparent);
+    border-color: var(--accent, var(--border-hi));
+  }
+  .stat[data-k="execution"]  { --accent: var(--phase-execution); }
+  .stat[data-k="planning"]   { --accent: var(--phase-planning); }
+  .stat[data-k="complete"]   { --accent: var(--phase-complete); }
+  .stat[data-k="cancelled"]  { --accent: var(--phase-cancelled); }
 
   /* ===========================
      Segmented filter (category tabs)
@@ -386,8 +395,8 @@
   .column[data-phase="ideation"]   { --col: var(--phase-ideation); }
   .column[data-phase="planning"]   { --col: var(--phase-planning); }
   .column[data-phase="execution"]  { --col: var(--phase-execution); }
-  .column[data-phase="validation"] { --col: var(--phase-validation); }
-  .column[data-phase="wrap"]       { --col: var(--phase-wrap); }
+  .column[data-phase="complete"]   { --col: var(--phase-complete); }
+  .column[data-phase="cancelled"]  { --col: var(--phase-cancelled); }
 
   /* View mode toggle */
   .view-toggle {
@@ -423,8 +432,8 @@
   .badge.phase-ideation   { background: color-mix(in srgb, var(--phase-ideation) 18%, transparent);   color: var(--phase-ideation);   border: 1px solid color-mix(in srgb, var(--phase-ideation) 40%, transparent); }
   .badge.phase-planning   { background: color-mix(in srgb, var(--phase-planning) 18%, transparent);   color: var(--phase-planning);   border: 1px solid color-mix(in srgb, var(--phase-planning) 40%, transparent); }
   .badge.phase-execution  { background: color-mix(in srgb, var(--phase-execution) 18%, transparent);  color: var(--phase-execution);  border: 1px solid color-mix(in srgb, var(--phase-execution) 40%, transparent); }
-  .badge.phase-validation { background: color-mix(in srgb, var(--phase-validation) 18%, transparent); color: var(--phase-validation); border: 1px solid color-mix(in srgb, var(--phase-validation) 40%, transparent); }
-  .badge.phase-wrap       { background: color-mix(in srgb, var(--phase-wrap) 18%, transparent);       color: var(--phase-wrap);       border: 1px solid color-mix(in srgb, var(--phase-wrap) 40%, transparent); }
+  .badge.phase-complete   { background: color-mix(in srgb, var(--phase-complete) 18%, transparent);   color: var(--phase-complete);   border: 1px solid color-mix(in srgb, var(--phase-complete) 40%, transparent); }
+  .badge.phase-cancelled  { background: color-mix(in srgb, var(--phase-cancelled) 18%, transparent);  color: var(--phase-cancelled);  border: 1px solid color-mix(in srgb, var(--phase-cancelled) 40%, transparent); }
 
   .badge.cat-work  { background: color-mix(in srgb, var(--color-work) 15%, transparent);  color: var(--color-work);  border: 1px solid color-mix(in srgb, var(--color-work) 35%, transparent); }
   .badge.cat-pump  { background: color-mix(in srgb, var(--color-pump) 15%, transparent);  color: var(--color-pump);  border: 1px solid color-mix(in srgb, var(--color-pump) 35%, transparent); }
@@ -435,14 +444,14 @@
   .seg-opt[data-v="ideation"].active   { --accent: var(--phase-ideation); }
   .seg-opt[data-v="planning"].active   { --accent: var(--phase-planning); }
   .seg-opt[data-v="execution"].active  { --accent: var(--phase-execution); }
-  .seg-opt[data-v="validation"].active { --accent: var(--phase-validation); }
-  .seg-opt[data-v="wrap"].active       { --accent: var(--phase-wrap); }
+  .seg-opt[data-v="complete"].active   { --accent: var(--phase-complete); }
+  .seg-opt[data-v="cancelled"].active  { --accent: var(--phase-cancelled); }
 
   .seg-btn[data-val="ideation"]   { --d: var(--phase-ideation); }
   .seg-btn[data-val="planning"]   { --d: var(--phase-planning); }
   .seg-btn[data-val="execution"]  { --d: var(--phase-execution); }
-  .seg-btn[data-val="validation"] { --d: var(--phase-validation); }
-  .seg-btn[data-val="wrap"]       { --d: var(--phase-wrap); }
+  .seg-btn[data-val="complete"]   { --d: var(--phase-complete); }
+  .seg-btn[data-val="cancelled"]  { --d: var(--phase-cancelled); }
 
   .col-header {
     display: flex;
@@ -517,11 +526,13 @@
     background: var(--stripe);
     transition: background var(--dur-2) var(--ease);
   }
-  .task[data-status="doing"] { --stripe: var(--state-doing); }
-  .task[data-status="done"]  { --stripe: var(--state-done); opacity: .55; }
-  .task[data-status="done"] .task-title { text-decoration: line-through; color: var(--text-med); }
-  .task[data-status="cancelled"] { --stripe: var(--state-cancelled); opacity: .38; }
-  .task[data-status="cancelled"] .task-title { text-decoration: line-through; color: var(--text-lo); font-style: italic; }
+  .task[data-phase="ideation"]  { --stripe: var(--phase-ideation); }
+  .task[data-phase="planning"]  { --stripe: var(--phase-planning); }
+  .task[data-phase="execution"] { --stripe: var(--phase-execution); }
+  .task[data-phase="complete"]  { --stripe: var(--phase-complete); opacity: .55; }
+  .task[data-phase="complete"] .task-title { text-decoration: line-through; color: var(--text-med); }
+  .task[data-phase="cancelled"] { --stripe: var(--phase-cancelled); opacity: .38; }
+  .task[data-phase="cancelled"] .task-title { text-decoration: line-through; color: var(--text-lo); font-style: italic; }
 
   .task:active { cursor: grabbing; }
   .task.sortable-chosen { box-shadow: var(--shadow-2); transform: scale(1.01); }
@@ -529,8 +540,8 @@
     opacity: .3;
     background: color-mix(in srgb, var(--col, var(--color-work)) 30%, var(--surface-2));
   }
-  body.hide-done .task[data-status="done"],
-  body.hide-done .task[data-status="cancelled"] { display: none; }
+  body.hide-done .task[data-phase="complete"],
+  body.hide-done .task[data-phase="cancelled"] { display: none; }
 
   .task-header {
     display: flex;
@@ -548,37 +559,27 @@
     flex: 1;
     min-width: 0;
   }
-  .status-btn {
+  /* phase quick-cycle badge (replaces status-btn) */
+  .phase-btn {
     flex-shrink: 0;
     min-height: 28px;
     padding: 0 10px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: var(--font-display);
-    letter-spacing: .6px;
-    text-transform: uppercase;
+    letter-spacing: .3px;
     border-radius: var(--radius-pill);
     border: 1px solid var(--border-hi);
     background: transparent;
     color: var(--text-med);
     cursor: pointer;
+    font-family: inherit;
     transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
   }
-  .status-btn[data-state="doing"] {
-    color: var(--state-doing);
-    border-color: color-mix(in srgb, var(--state-doing) 60%, transparent);
-    background: color-mix(in srgb, var(--state-doing) 14%, transparent);
-  }
-  .status-btn[data-state="done"] {
-    color: var(--state-done);
-    border-color: color-mix(in srgb, var(--state-done) 60%, transparent);
-    background: color-mix(in srgb, var(--state-done) 14%, transparent);
-  }
-  .status-btn[data-state="cancelled"] {
-    color: var(--state-cancelled);
-    border-color: color-mix(in srgb, var(--state-cancelled) 60%, transparent);
-    background: color-mix(in srgb, var(--state-cancelled) 14%, transparent);
-    text-decoration: line-through;
-  }
+  .phase-btn[data-phase="ideation"]  { color: var(--phase-ideation);  border-color: color-mix(in srgb, var(--phase-ideation) 50%, transparent);  background: color-mix(in srgb, var(--phase-ideation) 12%, transparent); }
+  .phase-btn[data-phase="planning"]  { color: var(--phase-planning);  border-color: color-mix(in srgb, var(--phase-planning) 50%, transparent);  background: color-mix(in srgb, var(--phase-planning) 12%, transparent); }
+  .phase-btn[data-phase="execution"] { color: var(--phase-execution); border-color: color-mix(in srgb, var(--phase-execution) 50%, transparent); background: color-mix(in srgb, var(--phase-execution) 12%, transparent); }
+  .phase-btn[data-phase="complete"]  { color: var(--phase-complete);  border-color: color-mix(in srgb, var(--phase-complete) 50%, transparent);  background: color-mix(in srgb, var(--phase-complete) 12%, transparent); }
+  .phase-btn[data-phase="cancelled"] { color: var(--phase-cancelled); border-color: color-mix(in srgb, var(--phase-cancelled) 50%, transparent); background: color-mix(in srgb, var(--phase-cancelled) 12%, transparent); text-decoration: line-through; }
 
   .task-header-actions {
     display: flex;
@@ -890,16 +891,6 @@
     line-height: 1.7;
     border-top: 1px solid var(--border);
   }
-  .save-status {
-    display: inline-block;
-    margin-left: 6px;
-    color: var(--state-done);
-    opacity: 0;
-    transform: translateY(-2px);
-    transition: opacity var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
-  }
-  .save-status.show { opacity: 1; transform: translateY(0); }
-
   /* filter hiding columns */
   .board.filtered .column:not(.match) { display: none; }
 
@@ -951,32 +942,27 @@
         </div>
       </div>
       <div class="appbar-actions">
-        <button class="iconbtn" title="내보내기" aria-label="내보내기" onclick="exportJSON()">⤓</button>
-        <button class="iconbtn" title="불러오기" aria-label="불러오기" onclick="importJSON()">⤒</button>
         <button class="iconbtn" title="초기화" aria-label="초기화" onclick="resetDefault()">↺</button>
-        <button class="iconbtn primary" title="저장" aria-label="저장" onclick="saveAll()">
-          <span>✓</span><span class="save-status" id="status">·</span>
-        </button>
       </div>
     </header>
 
     <section class="stats" aria-label="요약 통계">
-      <div class="stat" data-k="doing">
-        <span class="stat-label">지금 진행 중</span>
-        <span class="stat-value" id="stat-doing">0</span>
-      </div>
-      <div class="stat" data-k="todo">
-        <span class="stat-label">남은 할 일</span>
-        <span class="stat-value" id="stat-todo">0</span>
-      </div>
-      <div class="stat" data-k="done">
+      <button class="stat" data-k="execution" data-phase-filter="execution">
+        <span class="stat-label">실행 중</span>
+        <span class="stat-value" id="stat-execution">0</span>
+      </button>
+      <button class="stat" data-k="planning" data-phase-filter="planning">
+        <span class="stat-label">기획 중</span>
+        <span class="stat-value" id="stat-planning">0</span>
+      </button>
+      <button class="stat" data-k="complete" data-phase-filter="complete">
         <span class="stat-label">완료</span>
-        <span class="stat-value" id="stat-done">0</span>
-      </div>
-      <div class="stat" data-k="cancelled">
+        <span class="stat-value" id="stat-complete">0</span>
+      </button>
+      <button class="stat" data-k="cancelled" data-phase-filter="cancelled">
         <span class="stat-label">취소</span>
         <span class="stat-value" id="stat-cancelled">0</span>
-      </div>
+      </button>
     </section>
 
     <div class="view-toggle" role="tablist" aria-label="보기 전환">
@@ -996,10 +982,11 @@
 
     <footer class="footer">
       <strong>사용법</strong><br>
-      · <b>카드 탭</b> → 편집 시트 열림 (제목·카테고리·상태·기간·프로젝트 한 번에 변경)<br>
-      · 상태 배지 탭 → TODO/DOING/DONE/취소 순환 (빠른 토글)<br>
-      · 카드 우측 <b>⋮⋮</b> 핸들 드래그 → 컬럼 이동<br>
-      · 상단 카테고리 탭 → 집중 모드 · 자동 저장
+      · <b>카드 탭</b> → 편집 시트 (소속·단계·기간·프로젝트 변경)<br>
+      · 카드 우측 단계 배지 탭 → 아이디에이션→기획→실행→완료→취소 순환<br>
+      · 카드 우측 <b>⋮⋮</b> 드래그 → 컬럼 이동<br>
+      · 상단 통계 탭 → 해당 단계만 필터<br>
+      · 카테고리 탭 → 해당 영역 집중 · 모든 변경 자동 저장
     </footer>
   </div>
 
@@ -1032,17 +1019,8 @@
           <button class="seg-opt" data-v="ideation">💭 아이디에이션</button>
           <button class="seg-opt" data-v="planning">📐 기획</button>
           <button class="seg-opt" data-v="execution">⚙️ 실행</button>
-          <button class="seg-opt" data-v="validation">🔍 검증</button>
-          <button class="seg-opt" data-v="wrap">🏁 마무리</button>
-        </div>
-      </div>
-      <div class="field-group">
-        <div class="field-label">상태</div>
-        <div class="seg-field cols-4" id="sheet-seg-status">
-          <button class="seg-opt" data-v="todo">TODO</button>
-          <button class="seg-opt" data-v="doing">DOING</button>
-          <button class="seg-opt" data-v="done">DONE</button>
-          <button class="seg-opt" data-v="cancelled">취소</button>
+          <button class="seg-opt" data-v="complete">✅ 완료</button>
+          <button class="seg-opt" data-v="cancelled">🚫 취소</button>
         </div>
       </div>
       <div class="field-group">
@@ -1068,27 +1046,25 @@
 const STORAGE_KEY = 'jarvis-kanban-v2';
 
 const DEFAULT_TASKS = [
-  { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD',          status: 'todo',  phase: 'planning' },
-  { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo',  phase: 'execution' },
-  { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo',  phase: 'execution' },
-  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'pump',  horizon: 'mid',   proj: '펌프센터',      status: 'todo',  phase: 'planning' },
-  { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo',  phase: 'ideation' },
-  { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo',  phase: 'ideation' },
-  { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD',          status: 'todo',  phase: 'ideation' },
-  { id: 't10', title: '서준이 과제 진행 검토',                 cat: 'home',  horizon: 'short', proj: '서준이공모전', status: 'todo',  phase: 'execution' },
-  { id: 't11', title: '서준이 데이터 수집 (5개 데이터셋)',     cat: 'home',  horizon: 'mid',   proj: '서준이공모전', status: 'todo',  phase: 'execution' },
-  { id: 't20', title: 'The Universe 오케스트레이터 설계',     cat: 'hobby', horizon: 'short', proj: 'Universe',     status: 'doing', phase: 'planning' },
-  { id: 't21', title: 'llm-wiki 소스 ingest 파이프라인 검증', cat: 'hobby', horizon: 'short', proj: 'Jarvis',       status: 'todo',  phase: 'validation' },
-  { id: 't22', title: 'The Universe 수익 포인트 정리',        cat: 'hobby', horizon: 'mid',   proj: 'Universe',     status: 'todo',  phase: 'planning' },
-  { id: 't23', title: 'The Universe 슬라이드 업데이트',       cat: 'hobby', horizon: 'mid',   proj: 'Universe',     status: 'todo',  phase: 'wrap' },
-  { id: 't24', title: 'Resonance POC 8주 계획',              cat: 'hobby', horizon: 'long',  proj: 'Resonance',    status: 'todo',  phase: 'planning' },
-  { id: 't25', title: '바이브 게임즈',                        cat: 'hobby', horizon: 'long',  proj: '게임',          status: 'todo',  phase: 'ideation' },
-  { id: 't26', title: 'AI 개발팀 (에이전트 설계자 조직)',     cat: 'hobby', horizon: 'long',  proj: 'AI팀',          status: 'todo',  phase: 'ideation' },
-  { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis',       status: 'todo',  phase: 'planning' },
+  { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD',          phase: 'planning' },
+  { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          phase: 'execution' },
+  { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          phase: 'execution' },
+  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'pump',  horizon: 'mid',   proj: '펌프센터',      phase: 'planning' },
+  { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI',        phase: 'ideation' },
+  { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI',        phase: 'ideation' },
+  { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD',          phase: 'ideation' },
+  { id: 't10', title: '서준이 과제 진행 검토',                 cat: 'home',  horizon: 'short', proj: '서준이공모전', phase: 'execution' },
+  { id: 't11', title: '서준이 데이터 수집 (5개 데이터셋)',     cat: 'home',  horizon: 'mid',   proj: '서준이공모전', phase: 'execution' },
+  { id: 't20', title: 'The Universe 오케스트레이터 설계',     cat: 'hobby', horizon: 'short', proj: 'Universe',     phase: 'planning' },
+  { id: 't21', title: 'llm-wiki 소스 ingest 파이프라인 검증', cat: 'hobby', horizon: 'short', proj: 'Jarvis',       phase: 'execution' },
+  { id: 't22', title: 'The Universe 수익 포인트 정리',        cat: 'hobby', horizon: 'mid',   proj: 'Universe',     phase: 'planning' },
+  { id: 't23', title: 'The Universe 슬라이드 업데이트',       cat: 'hobby', horizon: 'mid',   proj: 'Universe',     phase: 'complete' },
+  { id: 't24', title: 'Resonance POC 8주 계획',              cat: 'hobby', horizon: 'long',  proj: 'Resonance',    phase: 'planning' },
+  { id: 't25', title: '바이브 게임즈',                        cat: 'hobby', horizon: 'long',  proj: '게임',          phase: 'ideation' },
+  { id: 't26', title: 'AI 개발팀 (에이전트 설계자 조직)',     cat: 'hobby', horizon: 'long',  proj: 'AI팀',          phase: 'ideation' },
+  { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis',       phase: 'planning' },
 ];
 
-const STATUS_ORDER = ['todo', 'doing', 'done', 'cancelled'];
-const STATUS_LABEL = { todo: 'TODO', doing: 'DOING', done: 'DONE', cancelled: '취소' };
 const HORIZON_LABEL = { short: '단기', mid: '중기', long: '장기' };
 
 const AXIS = {
@@ -1100,9 +1076,9 @@ const AXIS = {
   },
   phase: {
     key: 'phase',
-    values: ['ideation', 'planning', 'execution', 'validation', 'wrap'],
-    labels: { ideation: '아이디에이션', planning: '기획', execution: '실행', validation: '검증', wrap: '마무리' },
-    emoji:  { ideation: '💭', planning: '📐', execution: '⚙️', validation: '🔍', wrap: '🏁' }
+    values: ['ideation', 'planning', 'execution', 'complete', 'cancelled'],
+    labels: { ideation: '아이디에이션', planning: '기획', execution: '실행', complete: '완료', cancelled: '취소' },
+    emoji:  { ideation: '💭', planning: '📐', execution: '⚙️', complete: '✅', cancelled: '🚫' }
   }
 };
 
@@ -1111,13 +1087,21 @@ let hideDone = localStorage.getItem('kanban-hide-done') === '1';
 let showActions = localStorage.getItem('kanban-show-actions') === '1';
 let activeCat = localStorage.getItem('kanban-active-cat') || 'all';
 let viewMode = localStorage.getItem('kanban-view-mode') || 'context';
+let statFilter = localStorage.getItem('kanban-stat-filter') || ''; // phase filter from stat strip
 
 function loadTasks() {
-  const migrate = arr => arr.map(t => ({
-    status: 'todo',
-    phase: 'execution',
-    ...t
-  }));
+  const PHASE_MIGRATE = { wrap: 'complete', validation: 'execution' };
+  const STATUS_TO_PHASE = { done: 'complete', cancelled: 'cancelled' };
+  const migrate = arr => arr.map(t => {
+    let phase = t.phase || 'execution';
+    if (PHASE_MIGRATE[phase]) phase = PHASE_MIGRATE[phase];
+    // promote status=done/cancelled into phase if phase is still active
+    if (t.status && STATUS_TO_PHASE[t.status] && phase !== 'complete' && phase !== 'cancelled') {
+      phase = STATUS_TO_PHASE[t.status];
+    }
+    const { status, ...rest } = t;
+    return { ...rest, phase };
+  });
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) {
     try { return migrate(JSON.parse(stored)); } catch(e) {}
@@ -1135,9 +1119,6 @@ function loadTasks() {
 
 function saveTasks() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
-  const el = document.getElementById('status');
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 900);
 }
 
 function escapeHtml(s) {
@@ -1165,15 +1146,15 @@ function updateStats() {
   const scope = activeCat === 'all'
     ? tasks
     : tasks.filter(t => t[ax.key] === activeCat);
-  const doing     = scope.filter(t => t.status === 'doing').length;
-  const todo      = scope.filter(t => (t.status || 'todo') === 'todo').length;
-  const done      = scope.filter(t => t.status === 'done').length;
-  const cancelled = scope.filter(t => t.status === 'cancelled').length;
-  document.getElementById('stat-doing').textContent = doing;
-  document.getElementById('stat-todo').textContent = todo;
-  document.getElementById('stat-done').textContent = done;
-  const elCancel = document.getElementById('stat-cancelled');
-  if (elCancel) elCancel.textContent = cancelled;
+  const byPhase = p => scope.filter(t => (t.phase || 'execution') === p).length;
+  document.getElementById('stat-execution').textContent = byPhase('execution');
+  document.getElementById('stat-planning').textContent  = byPhase('planning');
+  document.getElementById('stat-complete').textContent  = byPhase('complete');
+  document.getElementById('stat-cancelled').textContent = byPhase('cancelled');
+  // highlight active stat filter
+  document.querySelectorAll('.stat').forEach(s => {
+    s.classList.toggle('active', s.dataset.phaseFilter === statFilter);
+  });
 }
 
 function renderSegmentedFilter() {
@@ -1240,28 +1221,31 @@ function render() {
   const ax = AXIS[viewMode];
   ax.values.forEach(v => {
     const list = document.getElementById('list-' + v);
-    const items = tasks.filter(t => (t[ax.key] || ax.values[ax.values.length - 1]) === v);
-    const visibleCount = hideDone ? items.filter(t => t.status !== 'done' && t.status !== 'cancelled').length : items.length;
+    let items = tasks.filter(t => (t[ax.key] || ax.values[ax.values.length - 1]) === v);
+    if (statFilter) items = items.filter(t => (t.phase || 'execution') === statFilter);
+    const visibleCount = hideDone ? items.filter(t => t.phase !== 'complete' && t.phase !== 'cancelled').length : items.length;
     document.getElementById('count-' + v).textContent = visibleCount;
     if (items.length === 0) {
       list.innerHTML = '<div class="empty">비어있음</div>';
     } else {
-      list.innerHTML = items.map(t => `
-        <div class="task" data-id="${t.id}" data-status="${t.status || 'todo'}">
+      list.innerHTML = items.map(t => {
+        const ph = t.phase || 'execution';
+        return `
+        <div class="task" data-id="${t.id}" data-phase="${ph}">
           <div class="task-header">
             <div class="task-title">${escapeHtml(t.title)}</div>
             <div class="task-header-actions">
-              <button class="status-btn" data-action="cycle-status" data-task-id="${t.id}" data-state="${t.status || 'todo'}">${STATUS_LABEL[t.status || 'todo']}</button>
+              <button class="phase-btn" data-action="cycle-phase" data-task-id="${t.id}" data-phase="${ph}">${AXIS.phase.emoji[ph]} ${AXIS.phase.labels[ph]}</button>
               <button class="drag-handle" data-action="nop" aria-label="드래그">⋮⋮</button>
             </div>
           </div>
           <div class="task-meta">
-            ${viewMode === 'context' ? phaseBadge(t.phase) : catBadge(t.cat)}
+            ${viewMode === 'context' ? phaseBadge(ph) : catBadge(t.cat)}
             ${horizonBadge(t.horizon)}
             ${projBadge(t.proj)}
           </div>
         </div>
-      `).join('');
+      `;}).join('');
     }
   });
   applySegmentedFilter();
@@ -1299,13 +1283,14 @@ function initSortable() {
   });
 }
 
-function cycleStatus(id) {
-  if (editingId) return; // guard: never cycle while editing
+function cyclePhase(id) {
+  if (editingId) return;
   const task = tasks.find(t => t.id === id);
   if (!task) return;
-  const cur = task.status || 'todo';
-  const next = STATUS_ORDER[(STATUS_ORDER.indexOf(cur) + 1) % STATUS_ORDER.length];
-  task.status = next;
+  const order = AXIS.phase.values;
+  const cur = task.phase || 'execution';
+  const next = order[(order.indexOf(cur) + 1) % order.length];
+  task.phase = next;
   saveTasks();
   render();
 }
@@ -1345,15 +1330,13 @@ function deleteTask(id, evt) {
 
 function addTask(value) {
   const id = 't' + Date.now();
-  const ax = AXIS[viewMode];
   const newTask = {
     id,
     title: '',
     cat:     viewMode === 'context' ? value : 'inbox',
     phase:   viewMode === 'phase'   ? value : 'execution',
     horizon: 'short',
-    proj:    '',
-    status:  'todo'
+    proj:    ''
   };
   tasks.push(newTask);
   saveTasks();
@@ -1384,7 +1367,6 @@ function openEdit(id) {
 
   setSegActive('sheet-seg-cat',     task.cat || 'inbox');
   setSegActive('sheet-seg-phase',   task.phase || 'execution');
-  setSegActive('sheet-seg-status',  task.status || 'todo');
   setSegActive('sheet-seg-horizon', task.horizon || 'short');
 
   document.getElementById('sheet-backdrop').classList.add('open');
@@ -1425,7 +1407,7 @@ document.getElementById('board').addEventListener('click', e => {
     e.preventDefault();
     const action = actionBtn.dataset.action;
     const tid = actionBtn.dataset.taskId;
-    if (action === 'cycle-status' && tid) cycleStatus(tid);
+    if (action === 'cycle-phase' && tid) cyclePhase(tid);
     return;
   }
   const card = e.target.closest('.task');
@@ -1459,7 +1441,6 @@ function saveFromSheet() {
     task.title   = newTitle;
     task.cat     = getSegValue('sheet-seg-cat')     || task.cat;
     task.phase   = getSegValue('sheet-seg-phase')   || task.phase || 'execution';
-    task.status  = getSegValue('sheet-seg-status')  || task.status;
     task.horizon = getSegValue('sheet-seg-horizon') || task.horizon;
     task.proj    = document.getElementById('sheet-input-proj').value.trim();
   }
@@ -1503,58 +1484,35 @@ function setActiveCat(cat) {
   updateStats();
 }
 
+function setStatFilter(phase) {
+  statFilter = (statFilter === phase) ? '' : phase;
+  localStorage.setItem('kanban-stat-filter', statFilter);
+  render();
+}
+
+// Stat strip click handlers
+document.querySelectorAll('.stat[data-phase-filter]').forEach(btn => {
+  btn.addEventListener('click', () => setStatFilter(btn.dataset.phaseFilter));
+});
+
 function showHelp() {
   alert([
     '자비스 칸반 사용법',
     '',
     '[보기 전환]',
     '• 🏢 소속별 — 회사/펌프센터/집/취미/미분류',
-    '• 🎯 단계별 — 아이디에이션/기획/실행/검증/마무리',
-    '• 상단 토글 버튼으로 전환 · 데이터 동일, 보기 방식만 변경',
+    '• 🎯 단계별 — 아이디에이션/기획/실행/완료/취소',
     '',
-    '• 카드 탭 → 편집 시트 (모든 필드 한 번에 변경)',
-    '• 상태 배지 탭 → TODO/DOING/DONE/취소 순환',
-    '• ⋮⋮ 드래그 → 컬럼 이동 (현재 축 기준으로 소속/단계 자동 적용)',
-    '• 상단 필터 탭 → 집중 모드',
-    '• 완료 숨김 → DONE/취소 카드 감춤',
-    '• 저장: localStorage 자동 · 📦 내보내기로 JSON 백업',
+    '[조작]',
+    '• 카드 탭 → 편집 시트 (소속·단계·기간·프로젝트 변경)',
+    '• 단계 배지 탭 → 아이디에이션→기획→실행→완료→취소 순환',
+    '• ⋮⋮ 드래그 → 현재 축 기준으로 컬럼 이동',
+    '• 상단 통계 카드 탭 → 해당 단계만 필터',
+    '• 카테고리 탭 → 해당 영역 집중',
+    '• 완료 숨김 → 완료/취소 카드 감춤',
+    '',
+    '모든 변경은 localStorage에 자동 저장됩니다.',
   ].join('\n'));
-}
-
-function saveAll() { saveTasks(); }
-
-function exportJSON() {
-  const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  const date = new Date().toISOString().slice(0,10);
-  a.download = `jarvis-kanban-${date}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importJSON() {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        if (Array.isArray(data)) {
-          tasks = data.map(t => ({ status: 'todo', ...t }));
-          saveTasks();
-          render();
-        }
-      } catch (err) { alert('JSON 파싱 실패'); }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
 }
 
 function resetDefault() {
