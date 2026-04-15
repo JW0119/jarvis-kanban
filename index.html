@@ -627,7 +627,7 @@
     z-index: 101;
     transform: translateY(100%);
     transition: transform var(--dur-2) var(--ease);
-    max-height: 90vh;
+    max-height: 82vh;
     overflow-y: auto;
     padding-bottom: env(safe-area-inset-bottom, 0);
     box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
@@ -635,37 +635,46 @@
   .sheet.open { transform: translateY(0); }
 
   .sheet-grip {
-    width: 40px;
-    height: 4px;
+    width: 48px;
+    height: 5px;
     background: var(--border-hi);
     border-radius: var(--radius-pill);
-    margin: 10px auto 6px;
+    margin: 10px auto 8px;
+    cursor: pointer;
+    transition: background var(--dur-1) var(--ease);
   }
+  .sheet-grip:hover, .sheet-grip:active { background: var(--text-lo); }
+
   .sheet-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 20px 8px;
+    padding: 8px 16px 12px;
     border-bottom: 1px solid var(--border);
+    gap: 12px;
   }
   .sheet-title {
     font-size: var(--text-md);
     font-weight: var(--font-display);
     color: var(--text-hi);
+    flex: 1;
   }
   .sheet-close {
-    width: 32px;
-    height: 32px;
-    min-height: 32px;
-    padding: 0;
+    min-width: 48px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0 14px;
     background: var(--surface-3);
     border: 1px solid var(--border-hi);
-    border-radius: var(--radius-pill);
-    color: var(--text-med);
-    font-size: 16px;
+    border-radius: var(--radius-md);
+    color: var(--text-hi);
+    font-size: 14px;
+    font-weight: var(--font-strong);
     line-height: 1;
     cursor: pointer;
+    font-family: inherit;
   }
+  .sheet-close:active { background: var(--surface-4); }
   .sheet-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
 
   .field-group { display: flex; flex-direction: column; gap: 8px; }
@@ -982,12 +991,12 @@
   </div>
 
   <!-- Edit Sheet -->
-  <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeEdit()"></div>
+  <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeEdit()" role="button" aria-label="닫기"></div>
   <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
-    <div class="sheet-grip"></div>
+    <div class="sheet-grip" onclick="closeEdit()" role="button" aria-label="닫기"></div>
     <div class="sheet-header">
       <div class="sheet-title" id="sheet-title">할 일 편집</div>
-      <button class="sheet-close" onclick="closeEdit()" aria-label="닫기">×</button>
+      <button class="sheet-close" onclick="closeEdit()" aria-label="닫기">닫기 ✕</button>
     </div>
     <div class="sheet-body">
       <div class="field-group">
@@ -1371,7 +1380,6 @@ function openEdit(id, evt) {
 
   document.getElementById('sheet-backdrop').classList.add('open');
   document.getElementById('sheet').classList.add('open');
-  document.body.style.overflow = 'hidden';
 
   // auto-focus title if empty (newly created)
   if (!task.title) {
@@ -1403,7 +1411,6 @@ document.addEventListener('click', e => {
 function closeEdit() {
   document.getElementById('sheet-backdrop').classList.remove('open');
   document.getElementById('sheet').classList.remove('open');
-  document.body.style.overflow = '';
   editingId = null;
 }
 
