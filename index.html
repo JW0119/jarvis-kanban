@@ -19,9 +19,10 @@
     --color-hobby: #f5a623;
 
     /* State */
-    --state-todo:  #9aa0a6;
-    --state-doing: #8ab4f8;
-    --state-done:  #34a853;
+    --state-todo:      #9aa0a6;
+    --state-doing:     #8ab4f8;
+    --state-done:      #34a853;
+    --state-cancelled: #6b7280;
 
     /* Horizon */
     --h-short: #ff8a80;
@@ -224,7 +225,7 @@
      =========================== */
   .stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--space-2);
     margin-bottom: var(--space-4);
   }
@@ -262,9 +263,10 @@
     font-variant-numeric: tabular-nums;
     color: var(--text-hi);
   }
-  .stat[data-k="doing"]  { --accent: var(--state-doing); }
-  .stat[data-k="todo"]   { --accent: var(--color-inbox); }
-  .stat[data-k="done"]   { --accent: var(--state-done); }
+  .stat[data-k="doing"]      { --accent: var(--state-doing); }
+  .stat[data-k="todo"]       { --accent: var(--color-inbox); }
+  .stat[data-k="done"]       { --accent: var(--state-done); }
+  .stat[data-k="cancelled"]  { --accent: var(--state-cancelled); }
 
   /* ===========================
      Segmented filter (category tabs)
@@ -441,6 +443,8 @@
   .task[data-status="doing"] { --stripe: var(--state-doing); }
   .task[data-status="done"]  { --stripe: var(--state-done); opacity: .55; }
   .task[data-status="done"] .task-title { text-decoration: line-through; color: var(--text-med); }
+  .task[data-status="cancelled"] { --stripe: var(--state-cancelled); opacity: .38; }
+  .task[data-status="cancelled"] .task-title { text-decoration: line-through; color: var(--text-lo); font-style: italic; }
 
   .task:active { cursor: grabbing; }
   .task.sortable-chosen { box-shadow: var(--shadow-2); transform: scale(1.01); }
@@ -448,7 +452,8 @@
     opacity: .3;
     background: color-mix(in srgb, var(--col, var(--color-work)) 30%, var(--surface-2));
   }
-  body.hide-done .task[data-status="done"] { display: none; }
+  body.hide-done .task[data-status="done"],
+  body.hide-done .task[data-status="cancelled"] { display: none; }
 
   .task-header {
     display: flex;
@@ -490,6 +495,12 @@
     color: var(--state-done);
     border-color: color-mix(in srgb, var(--state-done) 60%, transparent);
     background: color-mix(in srgb, var(--state-done) 14%, transparent);
+  }
+  .status-btn[data-state="cancelled"] {
+    color: var(--state-cancelled);
+    border-color: color-mix(in srgb, var(--state-cancelled) 60%, transparent);
+    background: color-mix(in srgb, var(--state-cancelled) 14%, transparent);
+    text-decoration: line-through;
   }
 
   .task-meta {
@@ -603,7 +614,7 @@
   @media (min-width: 768px) {
     .app { padding: var(--space-6) var(--space-6) var(--space-8); }
     .brand-title { font-size: var(--text-xl); }
-    .stats { grid-template-columns: repeat(3, 1fr); }
+    .stats { grid-template-columns: repeat(4, 1fr); }
     .stat-value { font-size: var(--text-2xl); }
     .board {
       grid-template-columns: repeat(2, 1fr);
@@ -619,7 +630,7 @@
   @media (min-width: 1200px) {
     .app { padding: var(--space-7) var(--space-7) var(--space-8); }
     .board { grid-template-columns: repeat(4, 1fr); }
-    .stats { grid-template-columns: repeat(3, 240px); justify-content: flex-start; }
+    .stats { grid-template-columns: repeat(4, 220px); justify-content: flex-start; }
   }
 
   /* Reduced motion */
@@ -663,6 +674,10 @@
       <div class="stat" data-k="done">
         <span class="stat-label">완료</span>
         <span class="stat-value" id="stat-done">0</span>
+      </div>
+      <div class="stat" data-k="cancelled">
+        <span class="stat-label">취소</span>
+        <span class="stat-value" id="stat-cancelled">0</span>
       </div>
     </section>
 
@@ -753,8 +768,8 @@ const DEFAULT_TASKS = [
   { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis',       status: 'todo' },
 ];
 
-const STATUS_ORDER = ['todo', 'doing', 'done'];
-const STATUS_LABEL = { todo: 'TODO', doing: 'DOING', done: 'DONE' };
+const STATUS_ORDER = ['todo', 'doing', 'done', 'cancelled'];
+const STATUS_LABEL = { todo: 'TODO', doing: 'DOING', done: 'DONE', cancelled: '취소' };
 const HORIZON_LABEL = { short: '단기', mid: '중기', long: '장기' };
 const CATS = ['work', 'home', 'hobby', 'inbox'];
 
@@ -801,12 +816,15 @@ function projBadge(p) { return p ? `<span class="badge proj">${escapeHtml(p)}</s
 
 function updateStats() {
   const scope = activeCat === 'all' ? tasks : tasks.filter(t => t.cat === activeCat);
-  const doing = scope.filter(t => t.status === 'doing').length;
-  const todo  = scope.filter(t => (t.status || 'todo') === 'todo').length;
-  const done  = scope.filter(t => t.status === 'done').length;
+  const doing     = scope.filter(t => t.status === 'doing').length;
+  const todo      = scope.filter(t => (t.status || 'todo') === 'todo').length;
+  const done      = scope.filter(t => t.status === 'done').length;
+  const cancelled = scope.filter(t => t.status === 'cancelled').length;
   document.getElementById('stat-doing').textContent = doing;
   document.getElementById('stat-todo').textContent = todo;
   document.getElementById('stat-done').textContent = done;
+  const elCancel = document.getElementById('stat-cancelled');
+  if (elCancel) elCancel.textContent = cancelled;
 }
 
 function applySegmentedFilter() {
