@@ -19,6 +19,13 @@
     --color-home:  #2fb866;
     --color-hobby: #f5a623;
 
+    /* Phase (lifecycle) */
+    --phase-ideation:   #a855f7;
+    --phase-planning:   #f97316;
+    --phase-execution:  #84cc16;
+    --phase-validation: #ec4899;
+    --phase-wrap:       #14b8a6;
+
     /* State */
     --state-todo:      #9aa0a6;
     --state-doing:     #8ab4f8;
@@ -305,12 +312,12 @@
     width: 8px; height: 8px; border-radius: 50%;
     background: var(--d, var(--text-lo));
   }
-  .seg-btn[data-cat="all"]    { --d: linear-gradient(135deg, var(--color-work), var(--color-home)); }
-  .seg-btn[data-cat="inbox"]  { --d: var(--color-inbox); }
-  .seg-btn[data-cat="work"]   { --d: var(--color-work); }
-  .seg-btn[data-cat="pump"]   { --d: var(--color-pump); }
-  .seg-btn[data-cat="home"]   { --d: var(--color-home); }
-  .seg-btn[data-cat="hobby"]  { --d: var(--color-hobby); }
+  .seg-btn[data-val="all"]    { --d: linear-gradient(135deg, var(--color-work), var(--color-home)); }
+  .seg-btn[data-val="inbox"]  { --d: var(--color-inbox); }
+  .seg-btn[data-val="work"]   { --d: var(--color-work); }
+  .seg-btn[data-val="pump"]   { --d: var(--color-pump); }
+  .seg-btn[data-val="home"]   { --d: var(--color-home); }
+  .seg-btn[data-val="hobby"]  { --d: var(--color-hobby); }
   .seg-btn.active {
     background: var(--surface-3);
     color: var(--text-hi);
@@ -369,6 +376,66 @@
   .column[data-cat="pump"]  { --col: var(--color-pump); }
   .column[data-cat="home"]  { --col: var(--color-home); }
   .column[data-cat="hobby"] { --col: var(--color-hobby); }
+  .column[data-phase="ideation"]   { --col: var(--phase-ideation); }
+  .column[data-phase="planning"]   { --col: var(--phase-planning); }
+  .column[data-phase="execution"]  { --col: var(--phase-execution); }
+  .column[data-phase="validation"] { --col: var(--phase-validation); }
+  .column[data-phase="wrap"]       { --col: var(--phase-wrap); }
+
+  /* View mode toggle */
+  .view-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    margin-bottom: var(--space-3);
+  }
+  .view-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-med);
+    padding: 10px 12px;
+    font-size: var(--text-sm);
+    font-weight: var(--font-strong);
+    font-family: inherit;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition: background var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+    min-height: 40px;
+  }
+  .view-btn.active {
+    background: linear-gradient(135deg, var(--color-work), var(--phase-ideation));
+    color: #fff;
+    box-shadow: var(--shadow-1);
+  }
+
+  /* Phase badge on cards */
+  .badge.phase-ideation   { background: color-mix(in srgb, var(--phase-ideation) 18%, transparent);   color: var(--phase-ideation);   border: 1px solid color-mix(in srgb, var(--phase-ideation) 40%, transparent); }
+  .badge.phase-planning   { background: color-mix(in srgb, var(--phase-planning) 18%, transparent);   color: var(--phase-planning);   border: 1px solid color-mix(in srgb, var(--phase-planning) 40%, transparent); }
+  .badge.phase-execution  { background: color-mix(in srgb, var(--phase-execution) 18%, transparent);  color: var(--phase-execution);  border: 1px solid color-mix(in srgb, var(--phase-execution) 40%, transparent); }
+  .badge.phase-validation { background: color-mix(in srgb, var(--phase-validation) 18%, transparent); color: var(--phase-validation); border: 1px solid color-mix(in srgb, var(--phase-validation) 40%, transparent); }
+  .badge.phase-wrap       { background: color-mix(in srgb, var(--phase-wrap) 18%, transparent);       color: var(--phase-wrap);       border: 1px solid color-mix(in srgb, var(--phase-wrap) 40%, transparent); }
+
+  .badge.cat-work  { background: color-mix(in srgb, var(--color-work) 15%, transparent);  color: var(--color-work);  border: 1px solid color-mix(in srgb, var(--color-work) 35%, transparent); }
+  .badge.cat-pump  { background: color-mix(in srgb, var(--color-pump) 15%, transparent);  color: var(--color-pump);  border: 1px solid color-mix(in srgb, var(--color-pump) 35%, transparent); }
+  .badge.cat-home  { background: color-mix(in srgb, var(--color-home) 15%, transparent);  color: var(--color-home);  border: 1px solid color-mix(in srgb, var(--color-home) 35%, transparent); }
+  .badge.cat-hobby { background: color-mix(in srgb, var(--color-hobby) 15%, transparent); color: var(--color-hobby); border: 1px solid color-mix(in srgb, var(--color-hobby) 35%, transparent); }
+  .badge.cat-inbox { background: color-mix(in srgb, var(--color-inbox) 15%, transparent); color: var(--color-inbox); border: 1px solid color-mix(in srgb, var(--color-inbox) 35%, transparent); }
+
+  .seg-opt[data-v="ideation"].active   { --accent: var(--phase-ideation); }
+  .seg-opt[data-v="planning"].active   { --accent: var(--phase-planning); }
+  .seg-opt[data-v="execution"].active  { --accent: var(--phase-execution); }
+  .seg-opt[data-v="validation"].active { --accent: var(--phase-validation); }
+  .seg-opt[data-v="wrap"].active       { --accent: var(--phase-wrap); }
+
+  .seg-btn[data-val="ideation"]   { --d: var(--phase-ideation); }
+  .seg-btn[data-val="planning"]   { --d: var(--phase-planning); }
+  .seg-btn[data-val="execution"]  { --d: var(--phase-execution); }
+  .seg-btn[data-val="validation"] { --d: var(--phase-validation); }
+  .seg-btn[data-val="wrap"]       { --d: var(--phase-wrap); }
 
   .col-header {
     display: flex;
@@ -890,14 +957,12 @@
       </div>
     </section>
 
-    <nav class="segmented" id="segmented" aria-label="카테고리 필터">
-      <button class="seg-btn active" data-cat="all"><span class="dot"></span>전체</button>
-      <button class="seg-btn" data-cat="work"><span class="dot"></span>회사</button>
-      <button class="seg-btn" data-cat="pump"><span class="dot"></span>펌프센터</button>
-      <button class="seg-btn" data-cat="home"><span class="dot"></span>집</button>
-      <button class="seg-btn" data-cat="hobby"><span class="dot"></span>취미</button>
-      <button class="seg-btn" data-cat="inbox"><span class="dot"></span>미분류</button>
-    </nav>
+    <div class="view-toggle" role="tablist" aria-label="보기 전환">
+      <button class="view-btn active" data-view="context" onclick="setViewMode('context')">🏢 소속별</button>
+      <button class="view-btn" data-view="phase" onclick="setViewMode('phase')">🎯 단계별</button>
+    </div>
+
+    <nav class="segmented" id="segmented" aria-label="필터"></nav>
 
     <div class="toolbar">
       <button class="chip" id="filter-done-btn" onclick="toggleHideDone()">완료 숨김</button>
@@ -905,57 +970,7 @@
       <button class="chip" onclick="showHelp()">도움말</button>
     </div>
 
-    <main class="board" id="board">
-      <section class="column" data-cat="work">
-        <div class="col-header">
-          <span class="col-mark"></span>
-          <div class="col-title">회사</div>
-          <span class="col-count" id="count-work">0</span>
-        </div>
-        <div class="task-list" id="list-work"></div>
-        <button class="add-task" onclick="addTask('work')">+ 회사 할 일 추가</button>
-      </section>
-
-      <section class="column" data-cat="pump">
-        <div class="col-header">
-          <span class="col-mark"></span>
-          <div class="col-title">펌프센터</div>
-          <span class="col-count" id="count-pump">0</span>
-        </div>
-        <div class="task-list" id="list-pump"></div>
-        <button class="add-task" onclick="addTask('pump')">+ 펌프센터 할 일 추가</button>
-      </section>
-
-      <section class="column" data-cat="home">
-        <div class="col-header">
-          <span class="col-mark"></span>
-          <div class="col-title">집</div>
-          <span class="col-count" id="count-home">0</span>
-        </div>
-        <div class="task-list" id="list-home"></div>
-        <button class="add-task" onclick="addTask('home')">+ 집 할 일 추가</button>
-      </section>
-
-      <section class="column" data-cat="hobby">
-        <div class="col-header">
-          <span class="col-mark"></span>
-          <div class="col-title">취미</div>
-          <span class="col-count" id="count-hobby">0</span>
-        </div>
-        <div class="task-list" id="list-hobby"></div>
-        <button class="add-task" onclick="addTask('hobby')">+ 취미 할 일 추가</button>
-      </section>
-
-      <section class="column" data-cat="inbox">
-        <div class="col-header">
-          <span class="col-mark"></span>
-          <div class="col-title">미분류</div>
-          <span class="col-count" id="count-inbox">0</span>
-        </div>
-        <div class="task-list" id="list-inbox"></div>
-        <button class="add-task" onclick="addTask('inbox')">+ 미분류에 추가</button>
-      </section>
-    </main>
+    <main class="board" id="board"></main>
 
     <footer class="footer">
       <strong>사용법</strong><br>
@@ -980,13 +995,23 @@
         <textarea class="field-textarea" id="sheet-input-title" rows="2" placeholder="할 일을 입력하세요"></textarea>
       </div>
       <div class="field-group">
-        <div class="field-label">카테고리</div>
+        <div class="field-label">소속</div>
         <div class="seg-field cols-3" id="sheet-seg-cat">
-          <button class="seg-opt" data-v="work">회사</button>
-          <button class="seg-opt" data-v="pump">펌프센터</button>
-          <button class="seg-opt" data-v="home">집</button>
-          <button class="seg-opt" data-v="hobby">취미</button>
-          <button class="seg-opt" data-v="inbox">미분류</button>
+          <button class="seg-opt" data-v="work">🏢 회사</button>
+          <button class="seg-opt" data-v="pump">💧 펌프센터</button>
+          <button class="seg-opt" data-v="home">🏠 집</button>
+          <button class="seg-opt" data-v="hobby">🎨 취미</button>
+          <button class="seg-opt" data-v="inbox">📥 미분류</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">단계</div>
+        <div class="seg-field cols-3" id="sheet-seg-phase">
+          <button class="seg-opt" data-v="ideation">💭 아이디에이션</button>
+          <button class="seg-opt" data-v="planning">📐 기획</button>
+          <button class="seg-opt" data-v="execution">⚙️ 실행</button>
+          <button class="seg-opt" data-v="validation">🔍 검증</button>
+          <button class="seg-opt" data-v="wrap">🏁 마무리</button>
         </div>
       </div>
       <div class="field-group">
@@ -1021,47 +1046,64 @@
 const STORAGE_KEY = 'jarvis-kanban-v2';
 
 const DEFAULT_TASKS = [
-  { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD',          status: 'todo' },
-  { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo' },
-  { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo' },
-  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'pump',  horizon: 'mid',   proj: '펌프센터',      status: 'todo' },
-  { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo' },
-  { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo' },
-  { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD',          status: 'todo' },
-  { id: 't10', title: '서준이 과제 진행 검토',                 cat: 'home',  horizon: 'short', proj: '서준이공모전', status: 'todo' },
-  { id: 't11', title: '서준이 데이터 수집 (5개 데이터셋)',     cat: 'home',  horizon: 'mid',   proj: '서준이공모전', status: 'todo' },
-  { id: 't20', title: 'The Universe 오케스트레이터 설계',     cat: 'hobby', horizon: 'short', proj: 'Universe',     status: 'doing' },
-  { id: 't21', title: 'llm-wiki 소스 ingest 파이프라인 검증', cat: 'hobby', horizon: 'short', proj: 'Jarvis',       status: 'todo' },
-  { id: 't22', title: 'The Universe 수익 포인트 정리',        cat: 'hobby', horizon: 'mid',   proj: 'Universe',     status: 'todo' },
-  { id: 't23', title: 'The Universe 슬라이드 업데이트',       cat: 'hobby', horizon: 'mid',   proj: 'Universe',     status: 'todo' },
-  { id: 't24', title: 'Resonance POC 8주 계획',              cat: 'hobby', horizon: 'long',  proj: 'Resonance',    status: 'todo' },
-  { id: 't25', title: '바이브 게임즈',                        cat: 'hobby', horizon: 'long',  proj: '게임',          status: 'todo' },
-  { id: 't26', title: 'AI 개발팀 (에이전트 설계자 조직)',     cat: 'hobby', horizon: 'long',  proj: 'AI팀',          status: 'todo' },
-  { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis',       status: 'todo' },
+  { id: 't1',  title: 'AI PPT 템플릿 제작',                 cat: 'work',  horizon: 'short', proj: 'AXD',          status: 'todo',  phase: 'planning' },
+  { id: 't2',  title: 'AI 교육 커리큘럼 8주차 완성',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo',  phase: 'execution' },
+  { id: 't3',  title: 'Bixby Routines 사례 패턴화',          cat: 'work',  horizon: 'mid',   proj: 'AXD',          status: 'todo',  phase: 'execution' },
+  { id: 't4',  title: '펌프센터 기획 초안',                   cat: 'pump',  horizon: 'mid',   proj: '펌프센터',      status: 'todo',  phase: 'planning' },
+  { id: 't5',  title: 'Gen Customization (One UI 스타일)',  cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo',  phase: 'ideation' },
+  { id: 't6',  title: 'Style generator 검토',                cat: 'work',  horizon: 'long',  proj: 'OneUI',        status: 'todo',  phase: 'ideation' },
+  { id: 't7',  title: 'Bixby Routines 패턴화 자동화',        cat: 'work',  horizon: 'long',  proj: 'AXD',          status: 'todo',  phase: 'ideation' },
+  { id: 't10', title: '서준이 과제 진행 검토',                 cat: 'home',  horizon: 'short', proj: '서준이공모전', status: 'todo',  phase: 'execution' },
+  { id: 't11', title: '서준이 데이터 수집 (5개 데이터셋)',     cat: 'home',  horizon: 'mid',   proj: '서준이공모전', status: 'todo',  phase: 'execution' },
+  { id: 't20', title: 'The Universe 오케스트레이터 설계',     cat: 'hobby', horizon: 'short', proj: 'Universe',     status: 'doing', phase: 'planning' },
+  { id: 't21', title: 'llm-wiki 소스 ingest 파이프라인 검증', cat: 'hobby', horizon: 'short', proj: 'Jarvis',       status: 'todo',  phase: 'validation' },
+  { id: 't22', title: 'The Universe 수익 포인트 정리',        cat: 'hobby', horizon: 'mid',   proj: 'Universe',     status: 'todo',  phase: 'planning' },
+  { id: 't23', title: 'The Universe 슬라이드 업데이트',       cat: 'hobby', horizon: 'mid',   proj: 'Universe',     status: 'todo',  phase: 'wrap' },
+  { id: 't24', title: 'Resonance POC 8주 계획',              cat: 'hobby', horizon: 'long',  proj: 'Resonance',    status: 'todo',  phase: 'planning' },
+  { id: 't25', title: '바이브 게임즈',                        cat: 'hobby', horizon: 'long',  proj: '게임',          status: 'todo',  phase: 'ideation' },
+  { id: 't26', title: 'AI 개발팀 (에이전트 설계자 조직)',     cat: 'hobby', horizon: 'long',  proj: 'AI팀',          status: 'todo',  phase: 'ideation' },
+  { id: 't27', title: 'Korean Law MCP 에이전트 구축',         cat: 'hobby', horizon: 'long',  proj: 'Jarvis',       status: 'todo',  phase: 'planning' },
 ];
 
 const STATUS_ORDER = ['todo', 'doing', 'done', 'cancelled'];
 const STATUS_LABEL = { todo: 'TODO', doing: 'DOING', done: 'DONE', cancelled: '취소' };
 const HORIZON_LABEL = { short: '단기', mid: '중기', long: '장기' };
-const CATS = ['work', 'pump', 'home', 'hobby', 'inbox'];
+
+const AXIS = {
+  context: {
+    key: 'cat',
+    values: ['work', 'pump', 'home', 'hobby', 'inbox'],
+    labels: { work: '회사', pump: '펌프센터', home: '집', hobby: '취미', inbox: '미분류' },
+    emoji:  { work: '🏢', pump: '💧', home: '🏠', hobby: '🎨', inbox: '📥' }
+  },
+  phase: {
+    key: 'phase',
+    values: ['ideation', 'planning', 'execution', 'validation', 'wrap'],
+    labels: { ideation: '아이디에이션', planning: '기획', execution: '실행', validation: '검증', wrap: '마무리' },
+    emoji:  { ideation: '💭', planning: '📐', execution: '⚙️', validation: '🔍', wrap: '🏁' }
+  }
+};
 
 let tasks = loadTasks();
 let hideDone = localStorage.getItem('kanban-hide-done') === '1';
 let showActions = localStorage.getItem('kanban-show-actions') === '1';
 let activeCat = localStorage.getItem('kanban-active-cat') || 'all';
+let viewMode = localStorage.getItem('kanban-view-mode') || 'context';
 
 function loadTasks() {
+  const migrate = arr => arr.map(t => ({
+    status: 'todo',
+    phase: 'execution',
+    ...t
+  }));
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      return parsed.map(t => ({ status: 'todo', ...t }));
-    } catch(e) {}
+    try { return migrate(JSON.parse(stored)); } catch(e) {}
   }
   const v1 = localStorage.getItem('jarvis-kanban-v1');
   if (v1) {
     try {
-      const parsed = JSON.parse(v1).map(t => ({ status: 'todo', ...t }));
+      const parsed = migrate(JSON.parse(v1));
       localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
       return parsed;
     } catch(e) {}
@@ -1085,9 +1127,22 @@ function horizonBadge(h) {
   return `<span class="badge ${h}">${HORIZON_LABEL[h]}</span>`;
 }
 function projBadge(p) { return p ? `<span class="badge proj">${escapeHtml(p)}</span>` : ''; }
+function catBadge(cat) {
+  const ax = AXIS.context;
+  if (!cat || !ax.labels[cat]) return '';
+  return `<span class="badge cat-${cat}">${ax.emoji[cat]} ${ax.labels[cat]}</span>`;
+}
+function phaseBadge(phase) {
+  const ax = AXIS.phase;
+  if (!phase || !ax.labels[phase]) return '';
+  return `<span class="badge phase-${phase}">${ax.emoji[phase]} ${ax.labels[phase]}</span>`;
+}
 
 function updateStats() {
-  const scope = activeCat === 'all' ? tasks : tasks.filter(t => t.cat === activeCat);
+  const ax = AXIS[viewMode];
+  const scope = activeCat === 'all'
+    ? tasks
+    : tasks.filter(t => t[ax.key] === activeCat);
   const doing     = scope.filter(t => t.status === 'doing').length;
   const todo      = scope.filter(t => (t.status || 'todo') === 'todo').length;
   const done      = scope.filter(t => t.status === 'done').length;
@@ -1099,32 +1154,73 @@ function updateStats() {
   if (elCancel) elCancel.textContent = cancelled;
 }
 
+function renderSegmentedFilter() {
+  const ax = AXIS[viewMode];
+  const seg = document.getElementById('segmented');
+  const parts = [`<button class="seg-btn" data-val="all"><span class="dot"></span>전체</button>`];
+  ax.values.forEach(v => {
+    parts.push(`<button class="seg-btn" data-val="${v}"><span class="dot"></span>${ax.emoji[v]} ${ax.labels[v]}</button>`);
+  });
+  seg.innerHTML = parts.join('');
+  seg.querySelectorAll('.seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => setActiveCat(btn.dataset.val));
+  });
+}
+
 function applySegmentedFilter() {
-  document.querySelectorAll('.seg-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.cat === activeCat);
+  document.querySelectorAll('#segmented .seg-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.val === activeCat);
   });
   const board = document.getElementById('board');
+  const ax = AXIS[viewMode];
   if (activeCat === 'all') {
     board.classList.remove('filtered');
     document.querySelectorAll('.column').forEach(c => c.classList.remove('match'));
   } else {
     board.classList.add('filtered');
     document.querySelectorAll('.column').forEach(c => {
-      c.classList.toggle('match', c.dataset.cat === activeCat);
+      const match = c.dataset[ax.key === 'cat' ? 'cat' : 'phase'] === activeCat;
+      c.classList.toggle('match', match);
     });
   }
+}
+
+function renderBoard() {
+  const ax = AXIS[viewMode];
+  const board = document.getElementById('board');
+  board.innerHTML = ax.values.map(v => `
+    <section class="column" data-${ax.key === 'cat' ? 'cat' : 'phase'}="${v}">
+      <div class="col-header">
+        <span class="col-mark"></span>
+        <div class="col-title">${ax.emoji[v]} ${ax.labels[v]}</div>
+        <span class="col-count" id="count-${v}">0</span>
+      </div>
+      <div class="task-list" id="list-${v}"></div>
+      <button class="add-task" data-addcat="${v}">+ ${ax.labels[v]} 할 일 추가</button>
+    </section>
+  `).join('');
+  board.querySelectorAll('.add-task').forEach(btn => {
+    btn.addEventListener('click', () => addTask(btn.dataset.addcat));
+  });
 }
 
 function render() {
   document.body.classList.toggle('hide-done', hideDone);
   document.getElementById('filter-done-btn').classList.toggle('on', hideDone);
   document.getElementById('actions-btn').classList.toggle('on', showActions);
+  document.querySelectorAll('.view-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.view === viewMode);
+  });
 
-  CATS.forEach(cat => {
-    const list = document.getElementById('list-' + cat);
-    const items = tasks.filter(t => t.cat === cat);
-    const visibleCount = hideDone ? items.filter(t => t.status !== 'done').length : items.length;
-    document.getElementById('count-' + cat).textContent = visibleCount;
+  renderBoard();
+  renderSegmentedFilter();
+
+  const ax = AXIS[viewMode];
+  ax.values.forEach(v => {
+    const list = document.getElementById('list-' + v);
+    const items = tasks.filter(t => (t[ax.key] || ax.values[ax.values.length - 1]) === v);
+    const visibleCount = hideDone ? items.filter(t => t.status !== 'done' && t.status !== 'cancelled').length : items.length;
+    document.getElementById('count-' + v).textContent = visibleCount;
     if (items.length === 0) {
       list.innerHTML = '<div class="empty">비어있음</div>';
     } else {
@@ -1137,7 +1233,11 @@ function render() {
               <button class="drag-handle" aria-label="드래그" onclick="event.stopPropagation()">⋮⋮</button>
             </div>
           </div>
-          <div class="task-meta">${horizonBadge(t.horizon)}${projBadge(t.proj)}</div>
+          <div class="task-meta">
+            ${viewMode === 'context' ? phaseBadge(t.phase) : catBadge(t.cat)}
+            ${horizonBadge(t.horizon)}
+            ${projBadge(t.proj)}
+          </div>
         </div>
       `).join('');
     }
@@ -1148,8 +1248,10 @@ function render() {
 }
 
 function initSortable() {
-  CATS.forEach(cat => {
-    const el = document.getElementById('list-' + cat);
+  const ax = AXIS[viewMode];
+  ax.values.forEach(v => {
+    const el = document.getElementById('list-' + v);
+    if (!el) return;
     if (el._sortable) el._sortable.destroy();
     el._sortable = new Sortable(el, {
       group: 'kanban',
@@ -1159,15 +1261,15 @@ function initSortable() {
       chosenClass: 'sortable-chosen',
       onEnd: evt => {
         const id = evt.item.dataset.id;
-        const newCat = evt.to.id.replace('list-', '');
+        const newVal = evt.to.id.replace('list-', '');
         const task = tasks.find(t => t.id === id);
-        if (task) task.cat = newCat;
+        if (task) task[ax.key] = newVal;
         const newOrder = Array.from(evt.to.children)
           .filter(c => c.classList.contains('task'))
           .map(c => c.dataset.id);
-        const others = tasks.filter(t => t.cat !== newCat);
-        const inCat = newOrder.map(id => tasks.find(t => t.id === id)).filter(Boolean);
-        tasks = [...others, ...inCat];
+        const others = tasks.filter(t => t[ax.key] !== newVal);
+        const inCol = newOrder.map(id => tasks.find(t => t.id === id)).filter(Boolean);
+        tasks = [...others, ...inCol];
         saveTasks();
         render();
       }
@@ -1219,13 +1321,31 @@ function deleteTask(id, evt) {
   render();
 }
 
-function addTask(cat) {
+function addTask(value) {
   const id = 't' + Date.now();
-  const newTask = { id, title: '', cat, horizon: 'short', proj: '', status: 'todo' };
+  const ax = AXIS[viewMode];
+  const newTask = {
+    id,
+    title: '',
+    cat:     viewMode === 'context' ? value : 'inbox',
+    phase:   viewMode === 'phase'   ? value : 'execution',
+    horizon: 'short',
+    proj:    '',
+    status:  'todo'
+  };
   tasks.push(newTask);
   saveTasks();
   render();
   openEdit(id);
+}
+
+function setViewMode(mode) {
+  if (mode !== 'context' && mode !== 'phase') return;
+  viewMode = mode;
+  localStorage.setItem('kanban-view-mode', mode);
+  activeCat = 'all'; // reset filter across view switch
+  localStorage.setItem('kanban-active-cat', 'all');
+  render();
 }
 
 /* ── Edit Sheet ──────────────────────────────────────────── */
@@ -1245,6 +1365,7 @@ function openEdit(id, evt) {
   document.getElementById('sheet-input-proj').value  = task.proj  || '';
 
   setSegActive('sheet-seg-cat',     task.cat || 'inbox');
+  setSegActive('sheet-seg-phase',   task.phase || 'execution');
   setSegActive('sheet-seg-status',  task.status || 'todo');
   setSegActive('sheet-seg-horizon', task.horizon || 'short');
 
@@ -1297,6 +1418,7 @@ function saveFromSheet() {
   } else {
     task.title   = newTitle;
     task.cat     = getSegValue('sheet-seg-cat')     || task.cat;
+    task.phase   = getSegValue('sheet-seg-phase')   || task.phase || 'execution';
     task.status  = getSegValue('sheet-seg-status')  || task.status;
     task.horizon = getSegValue('sheet-seg-horizon') || task.horizon;
     task.proj    = document.getElementById('sheet-input-proj').value.trim();
@@ -1345,12 +1467,17 @@ function showHelp() {
   alert([
     '자비스 칸반 사용법',
     '',
-    '• 상태 변경: 카드 우측 상단 TODO / DOING / DONE 배지 탭',
-    '• 카테고리 이동: 카드 길게 눌러 드래그',
-    '• 집중 모드: 상단 카테고리 탭(회사/집/취미/미분류)',
-    '• 카드 액션: 툴바의 "카드 액션" 토글 → 수정·기간·삭제',
-    '• 완료 숨김: 토글로 DONE 카드 감추기',
-    '• 저장: localStorage 자동 저장 · 내보내기는 JSON 파일',
+    '[보기 전환]',
+    '• 🏢 소속별 — 회사/펌프센터/집/취미/미분류',
+    '• 🎯 단계별 — 아이디에이션/기획/실행/검증/마무리',
+    '• 상단 토글 버튼으로 전환 · 데이터 동일, 보기 방식만 변경',
+    '',
+    '• 카드 탭 → 편집 시트 (모든 필드 한 번에 변경)',
+    '• 상태 배지 탭 → TODO/DOING/DONE/취소 순환',
+    '• ⋮⋮ 드래그 → 컬럼 이동 (현재 축 기준으로 소속/단계 자동 적용)',
+    '• 상단 필터 탭 → 집중 모드',
+    '• 완료 숨김 → DONE/취소 카드 감춤',
+    '• 저장: localStorage 자동 · 📦 내보내기로 JSON 백업',
   ].join('\n'));
 }
 
