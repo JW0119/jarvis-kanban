@@ -503,6 +503,208 @@
     text-decoration: line-through;
   }
 
+  .task-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .drag-handle {
+    width: 28px;
+    height: 28px;
+    min-height: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    color: var(--text-lo);
+    font-size: 14px;
+    line-height: 1;
+    cursor: grab;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -2px;
+  }
+  .drag-handle:active { cursor: grabbing; background: var(--surface-3); }
+  .drag-handle:hover { color: var(--text-med); background: var(--surface-3); }
+  .task { cursor: pointer; }
+
+  /* ===========================
+     Edit Sheet (mobile bottom-sheet / desktop modal)
+     =========================== */
+  .sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur-2) var(--ease), visibility var(--dur-2);
+  }
+  .sheet-backdrop.open { opacity: 1; visibility: visible; }
+
+  .sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--surface-2);
+    border-top: 1px solid var(--border);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    z-index: 101;
+    transform: translateY(100%);
+    transition: transform var(--dur-2) var(--ease);
+    max-height: 90vh;
+    overflow-y: auto;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+  }
+  .sheet.open { transform: translateY(0); }
+
+  .sheet-grip {
+    width: 40px;
+    height: 4px;
+    background: var(--border-hi);
+    border-radius: var(--radius-pill);
+    margin: 10px auto 6px;
+  }
+  .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sheet-title {
+    font-size: var(--text-md);
+    font-weight: var(--font-display);
+    color: var(--text-hi);
+  }
+  .sheet-close {
+    width: 32px;
+    height: 32px;
+    min-height: 32px;
+    padding: 0;
+    background: var(--surface-3);
+    border: 1px solid var(--border-hi);
+    border-radius: var(--radius-pill);
+    color: var(--text-med);
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .sheet-body { padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+
+  .field-group { display: flex; flex-direction: column; gap: 8px; }
+  .field-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-display);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--text-lo);
+  }
+  .field-input, .field-textarea {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-hi);
+    font-family: inherit;
+    font-size: var(--text-base);
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color var(--dur-1) var(--ease);
+    min-height: 44px;
+  }
+  .field-input:focus, .field-textarea:focus { border-color: var(--state-doing); }
+  .field-textarea { resize: vertical; min-height: 60px; line-height: 1.5; }
+
+  .seg-field {
+    display: grid;
+    gap: 6px;
+  }
+  .seg-field.cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .seg-field.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .seg-field.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .seg-opt {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    color: var(--text-med);
+    padding: 11px 8px;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: var(--font-body);
+    font-family: inherit;
+    cursor: pointer;
+    min-height: 44px;
+    transition: all var(--dur-1) var(--ease);
+  }
+  .seg-opt.active {
+    background: color-mix(in srgb, var(--accent, var(--state-doing)) 18%, var(--surface-1));
+    border-color: var(--accent, var(--state-doing));
+    color: var(--accent, var(--state-doing));
+    font-weight: var(--font-display);
+  }
+  .seg-opt[data-v="work"].active      { --accent: var(--color-work); }
+  .seg-opt[data-v="home"].active      { --accent: var(--color-home); }
+  .seg-opt[data-v="hobby"].active     { --accent: var(--color-hobby); }
+  .seg-opt[data-v="inbox"].active     { --accent: var(--color-inbox); }
+  .seg-opt[data-v="todo"].active      { --accent: var(--state-todo); }
+  .seg-opt[data-v="doing"].active     { --accent: var(--state-doing); }
+  .seg-opt[data-v="done"].active      { --accent: var(--state-done); }
+  .seg-opt[data-v="cancelled"].active { --accent: var(--state-cancelled); }
+  .seg-opt[data-v="short"].active     { --accent: var(--h-short); }
+  .seg-opt[data-v="mid"].active       { --accent: var(--h-mid); }
+  .seg-opt[data-v="long"].active      { --accent: var(--h-long); }
+
+  .sheet-footer {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 8px;
+    padding: 12px 20px 20px;
+    border-top: 1px solid var(--border);
+    background: var(--surface-2);
+    position: sticky;
+    bottom: 0;
+  }
+  .sheet-footer button {
+    min-height: 48px;
+    border-radius: var(--radius-md);
+    font-weight: var(--font-display);
+    font-size: var(--text-base);
+    cursor: pointer;
+    border: 1px solid var(--border-hi);
+    background: var(--surface-3);
+    color: var(--text-med);
+  }
+  .sheet-footer button.delete {
+    color: #ff8a80;
+    border-color: color-mix(in srgb, var(--color-inbox) 40%, transparent);
+    background: color-mix(in srgb, var(--color-inbox) 10%, transparent);
+  }
+  .sheet-footer button.save {
+    background: var(--state-doing);
+    border-color: var(--state-doing);
+    color: #0b0c10;
+  }
+
+  @media (min-width: 768px) {
+    .sheet {
+      left: 50%;
+      right: auto;
+      bottom: 50%;
+      transform: translate(-50%, 60%);
+      width: min(520px, 90vw);
+      max-height: 82vh;
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+    }
+    .sheet.open { transform: translate(-50%, 50%); }
+    .sheet-grip { display: none; }
+  }
+
   .task-meta {
     display: flex;
     flex-wrap: wrap;
@@ -739,11 +941,62 @@
 
     <footer class="footer">
       <strong>사용법</strong><br>
-      · 카드 우측 배지(TODO / DOING / DONE) 탭하면 상태 순환<br>
-      · 카드 길게 누른 채 드래그해서 컬럼 이동<br>
-      · 상단 카테고리 탭으로 집중 모드 · 자동 저장
+      · <b>카드 탭</b> → 편집 시트 열림 (제목·카테고리·상태·기간·프로젝트 한 번에 변경)<br>
+      · 상태 배지 탭 → TODO/DOING/DONE/취소 순환 (빠른 토글)<br>
+      · 카드 우측 <b>⋮⋮</b> 핸들 드래그 → 컬럼 이동<br>
+      · 상단 카테고리 탭 → 집중 모드 · 자동 저장
     </footer>
   </div>
+
+  <!-- Edit Sheet -->
+  <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeEdit()"></div>
+  <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet-grip"></div>
+    <div class="sheet-header">
+      <div class="sheet-title" id="sheet-title">할 일 편집</div>
+      <button class="sheet-close" onclick="closeEdit()" aria-label="닫기">×</button>
+    </div>
+    <div class="sheet-body">
+      <div class="field-group">
+        <label class="field-label" for="sheet-input-title">제목</label>
+        <textarea class="field-textarea" id="sheet-input-title" rows="2" placeholder="할 일을 입력하세요"></textarea>
+      </div>
+      <div class="field-group">
+        <div class="field-label">카테고리</div>
+        <div class="seg-field cols-4" id="sheet-seg-cat">
+          <button class="seg-opt" data-v="work">회사</button>
+          <button class="seg-opt" data-v="home">집</button>
+          <button class="seg-opt" data-v="hobby">취미</button>
+          <button class="seg-opt" data-v="inbox">미분류</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">상태</div>
+        <div class="seg-field cols-4" id="sheet-seg-status">
+          <button class="seg-opt" data-v="todo">TODO</button>
+          <button class="seg-opt" data-v="doing">DOING</button>
+          <button class="seg-opt" data-v="done">DONE</button>
+          <button class="seg-opt" data-v="cancelled">취소</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">기간</div>
+        <div class="seg-field cols-3" id="sheet-seg-horizon">
+          <button class="seg-opt" data-v="short">단기</button>
+          <button class="seg-opt" data-v="mid">중기</button>
+          <button class="seg-opt" data-v="long">장기</button>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="sheet-input-proj">프로젝트 (선택)</label>
+        <input type="text" class="field-input" id="sheet-input-proj" placeholder="예: AXD, Universe, 서준이">
+      </div>
+    </div>
+    <div class="sheet-footer">
+      <button class="delete" onclick="deleteFromSheet()">삭제</button>
+      <button class="save" onclick="saveFromSheet()">저장</button>
+    </div>
+  </aside>
 
 <script>
 const STORAGE_KEY = 'jarvis-kanban-v2';
@@ -857,18 +1110,15 @@ function render() {
       list.innerHTML = '<div class="empty">비어있음</div>';
     } else {
       list.innerHTML = items.map(t => `
-        <div class="task" data-id="${t.id}" data-status="${t.status || 'todo'}">
+        <div class="task" data-id="${t.id}" data-status="${t.status || 'todo'}" onclick="openEdit('${t.id}', event)">
           <div class="task-header">
             <div class="task-title">${escapeHtml(t.title)}</div>
-            <button class="status-btn" data-state="${t.status || 'todo'}" onclick="cycleStatus('${t.id}', event)">${STATUS_LABEL[t.status || 'todo']}</button>
+            <div class="task-header-actions">
+              <button class="status-btn" data-state="${t.status || 'todo'}" onclick="cycleStatus('${t.id}', event)">${STATUS_LABEL[t.status || 'todo']}</button>
+              <button class="drag-handle" aria-label="드래그" onclick="event.stopPropagation()">⋮⋮</button>
+            </div>
           </div>
           <div class="task-meta">${horizonBadge(t.horizon)}${projBadge(t.proj)}</div>
-          ${showActions ? `
-          <div class="task-actions">
-            <button class="task-action" onclick="editTask('${t.id}', event)">수정</button>
-            <button class="task-action" onclick="cycleHorizon('${t.id}', event)">${HORIZON_LABEL[t.horizon] || '기간'}</button>
-            <button class="task-action delete" onclick="deleteTask('${t.id}', event)">삭제</button>
-          </div>` : ''}
         </div>
       `).join('');
     }
@@ -885,8 +1135,7 @@ function initSortable() {
     el._sortable = new Sortable(el, {
       group: 'kanban',
       animation: 180,
-      delay: 150,
-      delayOnTouchOnly: true,
+      handle: '.drag-handle',
       ghostClass: 'sortable-ghost',
       chosenClass: 'sortable-chosen',
       onEnd: evt => {
@@ -952,13 +1201,107 @@ function deleteTask(id, evt) {
 }
 
 function addTask(cat) {
-  const title = prompt('새 할 일 제목:');
-  if (!title || !title.trim()) return;
   const id = 't' + Date.now();
-  tasks.push({ id, title: title.trim(), cat, horizon: 'short', proj: '', status: 'todo' });
+  const newTask = { id, title: '', cat, horizon: 'short', proj: '', status: 'todo' };
+  tasks.push(newTask);
   saveTasks();
   render();
+  openEdit(id);
 }
+
+/* ── Edit Sheet ──────────────────────────────────────────── */
+let editingId = null;
+
+function openEdit(id, evt) {
+  if (evt) {
+    // don't open when tapping a button inside the card
+    const tag = evt.target.tagName;
+    if (tag === 'BUTTON' || evt.target.closest('button')) return;
+  }
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  editingId = id;
+
+  document.getElementById('sheet-input-title').value = task.title || '';
+  document.getElementById('sheet-input-proj').value  = task.proj  || '';
+
+  setSegActive('sheet-seg-cat',     task.cat || 'inbox');
+  setSegActive('sheet-seg-status',  task.status || 'todo');
+  setSegActive('sheet-seg-horizon', task.horizon || 'short');
+
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // auto-focus title if empty (newly created)
+  if (!task.title) {
+    setTimeout(() => document.getElementById('sheet-input-title').focus(), 240);
+  }
+}
+
+function setSegActive(containerId, value) {
+  document.querySelectorAll('#' + containerId + ' .seg-opt').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.v === value);
+  });
+}
+
+function getSegValue(containerId) {
+  const active = document.querySelector('#' + containerId + ' .seg-opt.active');
+  return active ? active.dataset.v : null;
+}
+
+// seg click handlers (delegate)
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.seg-opt');
+  if (!btn) return;
+  const container = btn.parentElement;
+  if (!container || !container.classList.contains('seg-field')) return;
+  container.querySelectorAll('.seg-opt').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+});
+
+function closeEdit() {
+  document.getElementById('sheet-backdrop').classList.remove('open');
+  document.getElementById('sheet').classList.remove('open');
+  document.body.style.overflow = '';
+  editingId = null;
+}
+
+function saveFromSheet() {
+  if (!editingId) return;
+  const task = tasks.find(t => t.id === editingId);
+  if (!task) return;
+  const newTitle = document.getElementById('sheet-input-title').value.trim();
+  if (!newTitle) {
+    // empty title = delete
+    tasks = tasks.filter(t => t.id !== editingId);
+  } else {
+    task.title   = newTitle;
+    task.cat     = getSegValue('sheet-seg-cat')     || task.cat;
+    task.status  = getSegValue('sheet-seg-status')  || task.status;
+    task.horizon = getSegValue('sheet-seg-horizon') || task.horizon;
+    task.proj    = document.getElementById('sheet-input-proj').value.trim();
+  }
+  saveTasks();
+  closeEdit();
+  render();
+}
+
+function deleteFromSheet() {
+  if (!editingId) return;
+  const task = tasks.find(t => t.id === editingId);
+  if (!task) return;
+  if (!confirm(`"${task.title || '(제목 없음)'}" 삭제하시겠습니까?`)) return;
+  tasks = tasks.filter(t => t.id !== editingId);
+  saveTasks();
+  closeEdit();
+  render();
+}
+
+// ESC to close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && editingId) closeEdit();
+});
 
 function toggleHideDone() {
   hideDone = !hideDone;
