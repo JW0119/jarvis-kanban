@@ -600,35 +600,41 @@
 
   /* Tree / subtask nesting */
   .task-children {
-    margin: 8px 0 0 0;
-    padding-left: 14px;
+    margin: 10px 0 0 0;
+    padding: 4px 0 4px 14px;
     border-left: 2px dashed var(--border);
-    min-height: 8px;
+    min-height: 28px;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    position: relative;
   }
-  .task-children:empty {
-    min-height: 0;
-    padding: 0;
-    border: none;
-    margin: 0;
-  }
-  .task-children.empty-drop {
-    min-height: 8px;
-  }
-  body.dragging .task-children.empty-drop {
-    min-height: 32px;
-    margin-top: 8px;
-    padding: 6px 8px 6px 14px;
-    border: 2px dashed var(--border-hi);
-    border-radius: var(--radius-sm);
-    background: color-mix(in srgb, var(--state-doing, var(--phase-execution)) 6%, transparent);
-  }
-  body.dragging .task-children.empty-drop::after {
-    content: "+ 하위 추가";
+  .task-children.empty-drop::before {
+    content: "↓ 여기에 드롭하면 하위 태스크";
+    display: block;
     color: var(--text-lo);
     font-size: 10px;
+    font-weight: var(--font-body);
+    padding: 6px 2px;
+    opacity: .55;
+  }
+  body.dragging .task-children {
+    border-left-color: var(--phase-execution);
+    background: color-mix(in srgb, var(--phase-execution) 5%, transparent);
+  }
+  body.dragging .task-children.empty-drop {
+    min-height: 44px;
+    padding: 10px 8px 10px 14px;
+    border: 2px dashed var(--phase-execution);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--phase-execution) 10%, transparent);
+  }
+  body.dragging .task-children.empty-drop::before {
+    content: "↓ 하위로 이동";
+    color: var(--phase-execution);
+    font-weight: var(--font-display);
+    opacity: 1;
+    font-size: 11px;
   }
   .task[data-depth="1"] { border-left-width: 3px; }
   .task[data-depth="2"] { border-left-width: 3px; opacity: .95; }
@@ -1575,10 +1581,13 @@ document.getElementById('board').addEventListener('click', e => {
   }
 });
 
-// pointerdown guard — iOS 특히 touchstart에서 부모 이벤트 차단
+// pointerdown guard — iOS: button pointerdown이 부모 카드 이벤트로 퍼지지 않게
+// 단, drag handle(data-action='nop')은 SortableJS가 pointerdown을 받아야 하므로 예외
 document.getElementById('board').addEventListener('pointerdown', e => {
   const btn = e.target.closest('[data-action]');
-  if (btn) e.stopPropagation();
+  if (!btn) return;
+  if (btn.dataset.action === 'nop') return; // let Sortable handle drag
+  e.stopPropagation();
 }, true);
 
 function closeEdit() {
