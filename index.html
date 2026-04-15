@@ -1421,9 +1421,9 @@ function initSortable() {
     handle: '.drag-handle',
     ghostClass: 'sortable-ghost',
     chosenClass: 'sortable-chosen',
+    forceFallback: true,
     fallbackOnBody: true,
-    swapThreshold: 0.55,
-    invertSwap: true,
+    fallbackTolerance: 4,
     onStart: () => document.body.classList.add('dragging'),
     onEnd: (evt) => {
       document.body.classList.remove('dragging');
