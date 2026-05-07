@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "updated": "2026-05-08T06:40:00+09:00",
+  "source": "Jarvis (Telegram-driven sync). Edit via Telegram, not directly.",
+  "tasks": [
+    { "id": "t-jarvis-co",      "title": "회사 자비스 만들기",                            "cat": "work",  "horizon": "short", "proj": "Jarvis",        "phase": "planning",  "parentId": null },
+    { "id": "t-chatbot-co",     "title": "회사 챗봇 만들기",                              "cat": "work",  "horizon": "short", "proj": "Jarvis",        "phase": "planning",  "parentId": null },
+    { "id": "t-ai-ppt",         "title": "AI PPT 템플릿 제작",                            "cat": "work",  "horizon": "short", "proj": "AXD",           "phase": "planning",  "parentId": null },
+    { "id": "t-ai-edu-8w",      "title": "AI 교육 커리큘럼 8주차 완성",                    "cat": "work",  "horizon": "mid",   "proj": "AXD",           "phase": "execution", "parentId": null },
+    { "id": "t-bixby-pattern",  "title": "Bixby Routines 사례 패턴화",                    "cat": "work",  "horizon": "mid",   "proj": "AXD",           "phase": "execution", "parentId": null },
+    { "id": "t-bixby-auto",     "title": "Bixby Routines 패턴화 자동화",                  "cat": "work",  "horizon": "long",  "proj": "AXD",           "phase": "ideation",  "parentId": null },
+    { "id": "t-pump-plan",      "title": "펌프센터 기획 초안",                             "cat": "pump",  "horizon": "mid",   "proj": "펌프센터",       "phase": "planning",  "parentId": null },
+    { "id": "t-gen-custom",     "title": "Gen Customization (One UI 스타일)",            "cat": "work",  "horizon": "long",  "proj": "OneUI",         "phase": "ideation",  "parentId": null },
+    { "id": "t-style-gen",      "title": "Style generator 검토",                          "cat": "work",  "horizon": "long",  "proj": "OneUI",         "phase": "ideation",  "parentId": null },
+
+    { "id": "t-seojun-review",  "title": "서준이 과제 진행 검토",                          "cat": "home", "horizon": "short", "proj": "서준이공모전", "phase": "execution", "parentId": null },
+    { "id": "t-seojun-data",    "title": "서준이 데이터 수집 (5개 데이터셋)",              "cat": "home", "horizon": "mid",   "proj": "서준이공모전", "phase": "execution", "parentId": "t-seojun-review" },
+
+    { "id": "t-tu-orch",        "title": "The Universe 오케스트레이터 설계",                "cat": "hobby", "horizon": "short", "proj": "Universe",     "phase": "planning",  "parentId": null },
+    { "id": "t-tu-demo",        "title": "The Universe 데모 시나리오 v1 실행",              "cat": "hobby", "horizon": "short", "proj": "Universe",     "phase": "execution", "parentId": null },
+    { "id": "t-tu-revenue",     "title": "The Universe 수익 포인트 정리",                  "cat": "hobby", "horizon": "mid",   "proj": "Universe",     "phase": "planning",  "parentId": "t-tu-orch" },
+    { "id": "t-tu-slide",       "title": "The Universe 슬라이드 업데이트",                  "cat": "hobby", "horizon": "mid",   "proj": "Universe",     "phase": "planning",  "parentId": "t-tu-orch" },
+    { "id": "t-dash-pc-100",    "title": "Dash PC 확장 100개 리뷰",                       "cat": "work",  "horizon": "short", "proj": "Universe",     "phase": "execution", "parentId": null },
+    { "id": "t-skill-dash",     "title": "Skill → Dash Converter",                        "cat": "hobby", "horizon": "short", "proj": "Universe",     "phase": "planning",  "parentId": null },
+    { "id": "t-app-dash",       "title": "App → Dash Converter",                          "cat": "hobby", "horizon": "short", "proj": "Universe",     "phase": "planning",  "parentId": null },
+    { "id": "t-dash-spec",      "title": "Dash 스펙 확정 (5대 섹션)",                      "cat": "hobby", "horizon": "mid",   "proj": "Universe",     "phase": "planning",  "parentId": null },
+    { "id": "t-gift-ux",        "title": "선물하기 UX 레퍼런스 수집",                      "cat": "hobby", "horizon": "mid",   "proj": "Universe",     "phase": "planning",  "parentId": null },
+    { "id": "t-gen-design-sys", "title": "Generative Design System 설계",                  "cat": "hobby", "horizon": "mid",   "proj": "Universe",     "phase": "planning",  "parentId": null },
+    { "id": "t-agentic-mem",    "title": "Agentic Memory System 설계",                     "cat": "hobby", "horizon": "mid",   "proj": "Universe",     "phase": "planning",  "parentId": null },
+    { "id": "t-mem-oneui",      "title": "클로드 메모리 + OneUI 맥락 구조 분석",            "cat": "hobby", "horizon": "mid",   "proj": "Universe",     "phase": "planning",  "parentId": "t-agentic-mem" },
+    { "id": "t-self-llm",       "title": "자사 LLM 확보 전략",                             "cat": "hobby", "horizon": "long",  "proj": "Universe",     "phase": "ideation",  "parentId": null },
+    { "id": "t-dash-store",     "title": "Dash Store 에코 확보 전략 1~6차",                "cat": "hobby", "horizon": "long",  "proj": "Universe",     "phase": "ideation",  "parentId": null },
+    { "id": "t-external-dist",  "title": "사외 배포 (소상공인·크리에이터)",                "cat": "hobby", "horizon": "long",  "proj": "Universe",     "phase": "ideation",  "parentId": null },
+
+    { "id": "t-llmwiki-ingest", "title": "llm-wiki 소스 ingest 파이프라인 검증",           "cat": "hobby", "horizon": "short", "proj": "Jarvis",       "phase": "execution", "parentId": null },
+    { "id": "t-korean-law",     "title": "Korean Law MCP 에이전트 구축",                   "cat": "hobby", "horizon": "long",  "proj": "Jarvis",       "phase": "planning",  "parentId": null },
+
+    { "id": "t-resonance-poc",  "title": "Resonance POC 8주 계획",                        "cat": "hobby", "horizon": "long",  "proj": "Resonance",    "phase": "planning",  "parentId": null },
+    { "id": "t-resonance-vhm",  "title": "Resonance — 보이스/헬스/마인드풀니스 측면 보강",   "cat": "hobby", "horizon": "mid",   "proj": "Resonance",    "phase": "planning",  "parentId": "t-resonance-poc" },
+    { "id": "t-resonance-ai",   "title": "Resonance AI 활용 부분 정리",                    "cat": "hobby", "horizon": "mid",   "proj": "Resonance",    "phase": "planning",  "parentId": "t-resonance-poc" },
+    { "id": "t-resonance-idf",  "title": "Resonance 특허 IDF 4건 작성",                    "cat": "hobby", "horizon": "long",  "proj": "Resonance",    "phase": "planning",  "parentId": "t-resonance-poc" },
+
+    { "id": "t-vibe-games",     "title": "바이브 게임즈",                                   "cat": "hobby", "horizon": "long",  "proj": "게임",          "phase": "ideation",  "parentId": null },
+    { "id": "t-ai-team",        "title": "AI 개발팀 (에이전트 설계자 조직)",                 "cat": "hobby", "horizon": "long",  "proj": "AI팀",          "phase": "ideation",  "parentId": null }
+  ]
+}

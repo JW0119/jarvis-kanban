@@ -1723,6 +1723,35 @@ function resetDefault() {
 }
 
 render();
+
+// Phase 1 sync: fetch authoritative tasks.json from server.
+// Server is the single source of truth (자비스가 텔레그램으로 받은 입력 반영).
+// Local drag-drop edits are session-only and are overwritten by the next sync.
+(async function syncFromServer() {
+  try {
+    const res = await fetch('./tasks.json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) {
+      console.warn('[kanban-sync] tasks.json fetch failed:', res.status);
+      return;
+    }
+    const json = await res.json();
+    if (!json || !Array.isArray(json.tasks)) return;
+    const localUpdated = localStorage.getItem('kanban-tasks-updated') || '';
+    const serverUpdated = json.updated || '';
+    if (serverUpdated && localUpdated && serverUpdated <= localUpdated) {
+      console.log('[kanban-sync] already up to date:', localUpdated);
+      return;
+    }
+    tasks.length = 0;
+    tasks.push(...json.tasks.map(t => ({ parentId: null, ...t })));
+    saveTasks();
+    if (serverUpdated) localStorage.setItem('kanban-tasks-updated', serverUpdated);
+    render();
+    console.log('[kanban-sync] updated from server:', serverUpdated, '— tasks:', tasks.length);
+  } catch (e) {
+    console.warn('[kanban-sync] fetch error, using localStorage:', e);
+  }
+})();
 </script>
 </body>
 </html>
